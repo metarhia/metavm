@@ -1,6 +1,6 @@
 {
   "name": "metavm",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Metarhia script loader, node.js vm wrapper",
   "main": "metavm.js",
   "files": [],
