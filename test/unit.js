@@ -6,6 +6,20 @@ const metatests = require('metatests');
 
 const examples = path.join(__dirname, 'examples');
 
+metatests.test('MetaScript constructor', async test => {
+  const src = `({ field: 'value' });`;
+  const ms = new metavm.MetaScript(src, 'Example');
+  test.strictSame(ms.exports.field, 'value');
+  test.end();
+});
+
+metatests.test('MetaScript factory', async test => {
+  const src = `({ field: 'value' });`;
+  const ms = metavm.createScript(src, 'Example');
+  test.strictSame(ms.exports.field, 'value');
+  test.end();
+});
+
 metatests.test('Load script', async test => {
   const filePath = path.join(examples, 'simple.js');
   const ms = await metavm.load(filePath);
