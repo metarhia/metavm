@@ -3,7 +3,9 @@
   "version": "0.0.2",
   "description": "Metarhia script loader, node.js vm wrapper",
   "main": "metavm.js",
-  "files": [],
+  "files": [
+    "lib/"
+  ],
   "scripts": {
     "lint": "eslint . && prettier --check \"**/*.js\" \"**/*.json\" \"**/*.md\" \"**/.*rc\" \"**/*.yml\" \"**/*.ts\"",
     "fmt": "prettier --write \"**/*.js\" \"**/*.json\" \"**/*.md\" \"**/.*rc\" \"**/*.yml\" \"**/*.ts\"",
