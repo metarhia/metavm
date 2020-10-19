@@ -40,7 +40,7 @@ metatests.test('MetaScript factory', async test => {
 
 metatests.test('Load script', async test => {
   const filePath = path.join(examples, 'simple.js');
-  const ms = await metavm.load(filePath);
+  const ms = await metavm.readScript(filePath);
 
   test.strictSame(typeof ms.exports, 'object');
 
@@ -58,7 +58,7 @@ metatests.test('Load script', async test => {
 
 metatests.test('Load function', async test => {
   const filePath = path.join(examples, 'function.js');
-  const ms = await metavm.load(filePath);
+  const ms = await metavm.readScript(filePath);
 
   test.strictSame(typeof ms.exports, 'function');
 
@@ -72,7 +72,7 @@ metatests.test('Load function', async test => {
 
 metatests.test('Load arrow function', async test => {
   const filePath = path.join(examples, 'arrow.js');
-  const ms = await metavm.load(filePath);
+  const ms = await metavm.readScript(filePath);
 
   test.strictSame(typeof ms.exports, 'function');
   test.strictSame(ms.exports.toString(), '(a, b) => a + b');
@@ -83,7 +83,7 @@ metatests.test('Load arrow function', async test => {
 
 metatests.test('Load async function', async test => {
   const filePath = path.join(examples, 'async.js');
-  const ms = await metavm.load(filePath);
+  const ms = await metavm.readScript(filePath);
 
   test.strictSame(typeof ms.exports, 'function');
   test.strictSame(ms.exports.constructor.name, 'AsyncFunction');
@@ -100,7 +100,7 @@ metatests.test('File is not found', async test => {
   const filePath = path.join(examples, 'notfound.js');
   let ms;
   try {
-    ms = await metavm.load(filePath);
+    ms = await metavm.readScript(filePath);
   } catch (err) {
     test.strictSame(err.code, 'ENOENT');
   }
@@ -112,7 +112,7 @@ metatests.test('Syntax error', async test => {
   const filePath = path.join(examples, 'syntax.error');
   let ms;
   try {
-    ms = await metavm.load(filePath);
+    ms = await metavm.readScript(filePath);
   } catch (err) {
     test.strictSame(err.constructor.name, 'SyntaxError');
   }
