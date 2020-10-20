@@ -119,3 +119,28 @@ metatests.test('Syntax error', async test => {
   test.strictSame(ms, undefined);
   test.end();
 });
+
+metatests.test('Create default context', async test => {
+  const context = metavm.createContext();
+  test.strictSame(typeof context, 'object');
+  test.strictSame(context.console, console);
+  test.strictSame(context.global, undefined);
+  test.end();
+});
+
+metatests.test('Create empty context', async test => {
+  const context = metavm.createContext({});
+  test.strictSame(Object.keys(context), []);
+  test.strictSame(context.global, undefined);
+  test.end();
+});
+
+metatests.test('Create custom context', async test => {
+  const sandbox = { field: 'value' };
+  sandbox.global = sandbox;
+  const context = metavm.createContext(sandbox);
+  test.strictSame(context.field, 'value');
+  test.strictSame(Object.keys(context), ['field', 'global']);
+  test.strictSame(context.global, sandbox);
+  test.end();
+});
