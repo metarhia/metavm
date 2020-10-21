@@ -1,6 +1,6 @@
 {
   "name": "metavm",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "author": "Timur Shemsedinov <timur.shemsedinov@gmail.com>",
   "license": "MIT",
   "description": "Metarhia script loader, node.js vm wrapper",
