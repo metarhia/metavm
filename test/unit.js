@@ -56,6 +56,22 @@ metatests.test('Load script', async test => {
   test.end();
 });
 
+metatests.test('Load script with context and options', test => {
+  const filePath = path.join(examples, 'complex.js');
+  const context = metavm.createContext({ setTimeout });
+  const options = { filename: 'CUSTOM FILE NAME' };
+  metavm.readScript(filePath, context, options).then(ms => {
+    test.strictSame(ms.constructor.name, 'MetaScript');
+    ms.exports.add(2, 3, (err, sum) => {
+      test.strictSame(err.constructor.name === 'Error', true);
+      test.strictSame(err.stack.includes('CUSTOM FILE NAME'), true);
+      test.strictSame(err.message, 'Custom error');
+      test.strictSame(sum, 5);
+      test.end();
+    });
+  });
+});
+
 metatests.test('Load function', async test => {
   const filePath = path.join(examples, 'function.js');
   const ms = await metavm.readScript(filePath);
