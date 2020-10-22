@@ -138,15 +138,15 @@ metatests.test('Syntax error', async test => {
 
 metatests.test('Create default context', async test => {
   const context = metavm.createContext();
-  test.strictSame(typeof context, 'object');
-  test.strictSame(context.console, console);
+  test.strictSame(Object.keys(context), []);
   test.strictSame(context.global, undefined);
   test.end();
 });
 
-metatests.test('Create empty context', async test => {
-  const context = metavm.createContext({});
-  test.strictSame(Object.keys(context), []);
+metatests.test('Create common context', async test => {
+  const context = metavm.createContext(metavm.COMMON_CONTEXT);
+  test.strictSame(typeof context, 'object');
+  test.strictSame(context.console, console);
   test.strictSame(context.global, undefined);
   test.end();
 });
