@@ -8,7 +8,7 @@ const examples = path.join(__dirname, 'examples');
 
 metatests.test('MetaScript constructor', async test => {
   const src = `({ field: 'value' });`;
-  const ms = new metavm.MetaScript(src, 'Example');
+  const ms = new metavm.MetaScript('Example', src);
 
   test.strictSame(typeof ms.exports, 'object');
 
@@ -24,7 +24,7 @@ metatests.test('MetaScript constructor', async test => {
 
 metatests.test('MetaScript factory', async test => {
   const src = `({ field: 'value' });`;
-  const ms = metavm.createScript(src, 'Example');
+  const ms = metavm.createScript('Example', src);
 
   test.strictSame(typeof ms.exports, 'object');
 
@@ -59,8 +59,8 @@ metatests.test('Load script', async test => {
 metatests.test('Load script with context and options', test => {
   const filePath = path.join(examples, 'complex.js');
   const context = metavm.createContext({ setTimeout });
-  const options = { filename: 'CUSTOM FILE NAME' };
-  metavm.readScript(filePath, context, options).then(ms => {
+  const options = { filename: 'CUSTOM FILE NAME', context };
+  metavm.readScript(filePath, options).then(ms => {
     test.strictSame(ms.constructor.name, 'MetaScript');
     ms.exports.add(2, 3, (err, sum) => {
       test.strictSame(err.constructor.name === 'Error', true);
