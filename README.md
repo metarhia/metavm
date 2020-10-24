@@ -13,7 +13,7 @@ serialization format, etc.
 const metavm = require('metavm');
 
 const src = `({ field: 'value' });`;
-const ms = metavm.createScript(src, 'Example');
+const ms = metavm.createScript('Example', src);
 console.log(ms);
 
 // Output:
@@ -31,7 +31,7 @@ logic stored in files or database, etc.
 const metavm = require('metavm');
 
 const src = `(a, b) => a + b;`;
-const ms = metavm.createScript(src, 'Example');
+const ms = metavm.createScript('Example', src);
 console.log(ms);
 
 // Output:
