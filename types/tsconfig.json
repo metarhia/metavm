@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "strict": true,
+    "experimentalDecorators": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    "preserveWatchOutput": true
+  },
+  "include": ["*.d.ts", "lib/**/*.d.ts"]
+}
