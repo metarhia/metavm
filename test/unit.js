@@ -160,3 +160,17 @@ metatests.test('Create custom context', async test => {
   test.strictSame(context.global, sandbox);
   test.end();
 });
+
+metatests.test('Call undefined as a function', async test => {
+  const filePath = path.join(examples, 'undef.js');
+  const ms = await metavm.readScript(filePath);
+
+  let result;
+  try {
+    result = await ms.exports();
+  } catch (err) {
+    test.strictSame(err.constructor.name, 'TypeError');
+    test.strictSame(result, undefined);
+  }
+  test.end();
+});
