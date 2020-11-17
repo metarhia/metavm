@@ -15,7 +15,11 @@
     "isolation"
   ],
   "main": "metavm.js",
+  "browser": {
+    "./metavm.js": "./dist/metavm.js"
+  },
   "files": [
+    "dist/",
     "lib/"
   ],
   "engines": {
