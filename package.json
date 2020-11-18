@@ -17,7 +17,8 @@
   "main": "metavm.js",
   "types": "metavm.d.ts",
   "browser": {
-    "./metavm.js": "./dist/metavm.js"
+    "./metavm.js": "./dist/metavm.js",
+    "./vm.js": "./dist/vm.js"
   },
   "files": ["dist/", "metavm.d.ts"],
   "engines": {
@@ -40,7 +41,8 @@
     "lint": "eslint . && prettier -c \"**/*.js\" \"**/*.json\" \"**/*.md\" \"**/.*rc\" \"**/*.ts\"",
     "types": "tsc -p tsconfig.json",
     "fmt": "prettier --write \"**/*.js\" \"**/*.json\" \"**/*.md\" \"**/.*rc\" \"**/*.ts\"",
-    "test": "npm run lint && npm run types && metatests test/unit.js && metatests test/timeout.js"
+    "test": "npm run lint && npm run types && metatests test/unit.js && metatests test/timeout.js",
+    "metatests-browser": "metatests-browser -c metatest-browser.config.json"
   },
   "devDependencies": {
     "@types/node": "^18.15.0",
@@ -51,6 +53,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "metatests": "^0.8.2",
     "prettier": "^2.8.4",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "metatests-browser-runner": "^0.6.0"
   }
 }

@@ -1,0 +1,7 @@
+{
+  "files": ["browser-test/vm.js"],
+  "browser": {
+    "browsers": ["ChromeHeadless"],
+    "logLevel": "default"
+  }
+}
