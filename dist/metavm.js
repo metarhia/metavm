@@ -1,2 +1,1 @@
-export class MetaScript {
-}
+export class MetaScript {}
