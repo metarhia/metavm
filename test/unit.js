@@ -6,7 +6,7 @@ const metatests = require('metatests');
 
 const examples = path.join(__dirname, 'examples');
 
-metatests.test('MetaScript constructor', async test => {
+metatests.test('MetaScript constructor', async (test) => {
   const src = `({ field: 'value' });`;
   const ms = new metavm.MetaScript('Example', src);
 
@@ -22,7 +22,7 @@ metatests.test('MetaScript constructor', async test => {
   test.end();
 });
 
-metatests.test('MetaScript factory', async test => {
+metatests.test('MetaScript factory', async (test) => {
   const src = `({ field: 'value' });`;
   const ms = metavm.createScript('Example', src);
 
@@ -38,7 +38,7 @@ metatests.test('MetaScript factory', async test => {
   test.end();
 });
 
-metatests.test('Load script', async test => {
+metatests.test('Load script', async (test) => {
   const filePath = path.join(examples, 'simple.js');
   const ms = await metavm.readScript(filePath);
 
@@ -56,11 +56,11 @@ metatests.test('Load script', async test => {
   test.end();
 });
 
-metatests.test('Load script with context and options', test => {
+metatests.test('Load script with context and options', (test) => {
   const filePath = path.join(examples, 'complex.js');
   const context = metavm.createContext({ setTimeout });
   const options = { filename: 'CUSTOM FILE NAME', context };
-  metavm.readScript(filePath, options).then(ms => {
+  metavm.readScript(filePath, options).then((ms) => {
     test.strictSame(ms.constructor.name, 'MetaScript');
     ms.exports.add(2, 3, (err, sum) => {
       test.strictSame(err.constructor.name === 'Error', true);
@@ -72,7 +72,7 @@ metatests.test('Load script with context and options', test => {
   });
 });
 
-metatests.test('Load function', async test => {
+metatests.test('Load function', async (test) => {
   const filePath = path.join(examples, 'function.js');
   const ms = await metavm.readScript(filePath);
 
@@ -86,7 +86,7 @@ metatests.test('Load function', async test => {
   test.end();
 });
 
-metatests.test('Load arrow function', async test => {
+metatests.test('Load arrow function', async (test) => {
   const filePath = path.join(examples, 'arrow.js');
   const ms = await metavm.readScript(filePath);
 
@@ -97,7 +97,7 @@ metatests.test('Load arrow function', async test => {
   test.end();
 });
 
-metatests.test('Load async function', async test => {
+metatests.test('Load async function', async (test) => {
   const filePath = path.join(examples, 'async.js');
   const ms = await metavm.readScript(filePath);
 
@@ -112,7 +112,7 @@ metatests.test('Load async function', async test => {
   test.end();
 });
 
-metatests.test('File is not found', async test => {
+metatests.test('File is not found', async (test) => {
   const filePath = path.join(examples, 'notfound.js');
   let ms;
   try {
@@ -124,7 +124,7 @@ metatests.test('File is not found', async test => {
   test.end();
 });
 
-metatests.test('Syntax error', async test => {
+metatests.test('Syntax error', async (test) => {
   const filePath = path.join(examples, 'syntax.error');
   let ms;
   try {
@@ -136,14 +136,14 @@ metatests.test('Syntax error', async test => {
   test.end();
 });
 
-metatests.test('Create default context', async test => {
+metatests.test('Create default context', async (test) => {
   const context = metavm.createContext();
   test.strictSame(Object.keys(context), []);
   test.strictSame(context.global, undefined);
   test.end();
 });
 
-metatests.test('Create common context', async test => {
+metatests.test('Create common context', async (test) => {
   const context = metavm.createContext(metavm.COMMON_CONTEXT);
   test.strictSame(typeof context, 'object');
   test.strictSame(context.console, console);
@@ -151,7 +151,7 @@ metatests.test('Create common context', async test => {
   test.end();
 });
 
-metatests.test('Create custom context', async test => {
+metatests.test('Create custom context', async (test) => {
   const sandbox = { field: 'value' };
   sandbox.global = sandbox;
   const context = metavm.createContext(sandbox);
@@ -161,7 +161,7 @@ metatests.test('Create custom context', async test => {
   test.end();
 });
 
-metatests.test('Call undefined as a function', async test => {
+metatests.test('Call undefined as a function', async (test) => {
   const filePath = path.join(examples, 'undef.js');
   const ms = await metavm.readScript(filePath);
 

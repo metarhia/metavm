@@ -9,6 +9,7 @@
 
 Script contains object expression. You can use it for configs, network packets,
 serialization format, etc.
+
 ```js
 const metavm = require('metavm');
 
@@ -27,6 +28,7 @@ console.log(ms);
 
 Script contains function expression. You can use it for api endpoints, domain
 logic stored in files or database, etc.
+
 ```js
 const metavm = require('metavm');
 
