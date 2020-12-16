@@ -1,8 +1,3 @@
-node_modules/
-.npm
-.eslintcache
-.yarn-integrity
-.env
-.env.test
+node_modules
 *.log
-*.tgz
+.DS_Store
