@@ -4,6 +4,7 @@
 [![NPM Version](https://badge.fury.io/js/metavm.svg)](https://badge.fury.io/js/metavm)
 [![NPM Downloads/Month](https://img.shields.io/npm/dm/metavm.svg)](https://www.npmjs.com/package/metavm)
 [![NPM Downloads](https://img.shields.io/npm/dt/metavm.svg)](https://www.npmjs.com/package/metavm)
+[![license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/metarhia/metavm/blob/master/LICENSE)
 
 ## Create script from string
 
