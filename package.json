@@ -25,13 +25,18 @@
   "engines": {
     "node": "^12.9 || 14 || 15"
   },
-  "homepage": "https://github.com/metarhia/metavm#readme",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/metarhia/metavm.git"
   },
   "bugs": {
-    "url": "https://github.com/metarhia/metavm/issues"
+    "url": "https://github.com/metarhia/metavm/issues",
+    "email": "timur.shemsedinov@gmail.com"
+  },
+  "homepage": "https://metarhia.com",
+  "funding": {
+    "type": "patreon",
+    "url": "https://www.patreon.com/tshemsedinov"
   },
   "scripts": {
     "lint": "eslint . && prettier --check \"**/*.js\" \"**/*.json\" \"**/*.md\" \"**/.*rc\" \"**/*.yml\"",
