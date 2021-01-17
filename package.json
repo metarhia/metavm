@@ -16,7 +16,8 @@
   ],
   "main": "metavm.js",
   "browser": {
-    "./metavm.js": "./dist/metavm.js"
+    "./metavm.js": "./dist/metavm.js",
+    "./vm.js": "./dist/vm.js"
   },
   "files": [
     "dist/",
@@ -41,7 +42,8 @@
   "scripts": {
     "lint": "eslint . && prettier --check \"**/*.js\" \"**/*.json\" \"**/*.md\" \"**/.*rc\" \"**/*.yml\"",
     "fmt": "prettier --write \"**/*.js\" \"**/*.json\" \"**/*.md\" \"**/.*rc\" \"**/*.yml\"",
-    "test": "eslint . && metatests test/"
+    "test": "eslint . && metatests test/",
+    "metatests-browser": "metatests-browser -c metatest-browser.config.json"
   },
   "devDependencies": {
     "eslint": "^7.15.0",
@@ -50,6 +52,7 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-prettier": "^3.3.0",
     "metatests": "^0.7.2",
-    "prettier": "^2.2.1"
+    "prettier": "^2.2.1",
+    "metatests-browser-runner": "^0.6.0"
   }
 }
