@@ -15,6 +15,7 @@
     "isolation"
   ],
   "main": "metavm.js",
+  "types": "metavm.d.ts",
   "browser": {
     "./metavm.js": "./dist/metavm.js"
   },
@@ -44,6 +45,7 @@
     "test": "eslint . && metatests test/"
   },
   "devDependencies": {
+    "@types/node": "^14.14.27",
     "eslint": "^7.15.0",
     "eslint-config-metarhia": "^7.0.1",
     "eslint-config-prettier": "^7.0.0",
