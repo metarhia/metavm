@@ -40,10 +40,10 @@
     "url": "https://www.patreon.com/tshemsedinov"
   },
   "scripts": {
-    "lint": "eslint . && prettier --check \"**/*.js\" \"**/*.json\" \"**/*.md\" \"**/.*rc\" \"**/*.yml\"",
+    "lint": "eslint . && prettier -c \"**/*.js\" \"**/*.json\" \"**/*.md\" \"**/.*rc\" \"**/*.ts\"",
     "types": "tsc -p types/tsconfig.json",
-    "fmt": "prettier --write \"**/*.js\" \"**/*.json\" \"**/*.md\" \"**/.*rc\" \"**/*.yml\"",
-    "test": "npm run types && eslint . && metatests test/"
+    "fmt": "prettier --write \"**/*.js\" \"**/*.json\" \"**/*.md\" \"**/.*rc\" \"**/*.ts\"",
+    "test": "npm run lint && npm run types && metatests test/"
   },
   "devDependencies": {
     "@types/node": "^14.14.37",
