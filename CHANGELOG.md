@@ -2,6 +2,10 @@
 
 ## [Unreleased][unreleased]
 
+## [1.0.1][] - 2021-04-13
+
+- Add .d.ts typings
+
 ## [1.0.0][] - 2020-12-17
 
 - Add security policy and config for editors
@@ -24,7 +28,8 @@ First metavm implementation with following features
 - Contexts, use default empty and frozen, emulated or pass one
 - Use `microtaskMode` https://github.com/nodejs/node/pull/34023
 
-[unreleased]: https://github.com/metarhia/metavm/compare/v1.0.0...HEAD
+[unreleased]: https://github.com/metarhia/metavm/compare/v1.0.1...HEAD
+[1.0.1]: https://github.com/metarhia/metavm/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/metarhia/metavm/compare/v0.2.0...v1.0.0
 [0.2.0]: https://github.com/metarhia/metavm/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/metarhia/metavm/releases/tag/v0.1.0
