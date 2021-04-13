@@ -26,4 +26,7 @@ export function createScript(
   options?: MetaScriptOptions
 ): MetaScript;
 
-export function readScript(filePath: string, options?: BaseOptions): Promise<MetaScript>;
+export function readScript(
+  filePath: string,
+  options?: BaseOptions
+): Promise<MetaScript>;
