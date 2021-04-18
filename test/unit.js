@@ -156,8 +156,19 @@ metatests.test('Create custom context', async (test) => {
   sandbox.global = sandbox;
   const context = metavm.createContext(sandbox);
   test.strictSame(context.field, 'value');
-  test.strictSame(Object.keys(context), ['field', 'global']);
+  test.strictSame(Object.keys(context), ['field', 'global', 'require']);
   test.strictSame(context.global, sandbox);
+  test.end();
+});
+
+metatests.test('Require binded to custom context', async (test) => {
+  const sandbox = { field: 'value' };
+  sandbox.global = sandbox;
+  const context = metavm.createContext(sandbox);
+  const src = `({ exist: require('field'), notExist: require('nothing') })`;
+  const ms = metavm.createScript('Example', src, { context });
+  test.strictSame('value', ms.exports.exist);
+  test.strictSame(undefined, ms.exports.notExist);
   test.end();
 });
 
