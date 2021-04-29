@@ -1,7 +1,8 @@
 'use strict';
 
 const vm = require('vm');
-const fs = require('fs').promises;
+const fs = require('fs');
+const fsp = fs.promises;
 const path = require('path');
 
 const RUN_OPTIONS = { timeout: 5000, displayErrors: false };
@@ -49,7 +50,7 @@ class MetaScript {
 const createScript = (name, src, options) => new MetaScript(name, src, options);
 
 const readScript = async (filePath, options) => {
-  const src = await fs.readFile(filePath, 'utf8');
+  const src = await fsp.readFile(filePath, 'utf8');
   if (src === '') throw new SyntaxError(`File ${filePath} is empty`);
   const name =
     options && options.filename
@@ -59,6 +60,22 @@ const readScript = async (filePath, options) => {
   return script;
 };
 
+const metarequire = (context, permitted = {}) => {
+  const require = (module) => {
+    if (Reflect.has(permitted, module)) {
+      return Reflect.get(permitted, module);
+    }
+    try {
+      const src = fs.readFileSync(module, 'utf8');
+      const script = createScript(module, src, { context });
+      return script;
+    } catch {
+      throw new Error(`Cannot find module: '${module}'`);
+    }
+  };
+  return require;
+};
+
 module.exports = {
   createContext,
   MetaScript,
@@ -66,4 +83,5 @@ module.exports = {
   EMPTY_CONTEXT,
   COMMON_CONTEXT,
   readScript,
+  metarequire,
 };

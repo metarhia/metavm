@@ -2,6 +2,8 @@
 
 ## [Unreleased][unreleased]
 
+- Implement metarequire and require nesting
+
 ## [1.1.0][] - 2022-03-15
 
 - Move everything into a single file
