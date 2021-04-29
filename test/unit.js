@@ -174,3 +174,21 @@ metatests.test('Call undefined as a function', async (test) => {
   }
   test.end();
 });
+
+metatests.test('Metarequire nestsed modules', async (test) => {
+  const context = { field: 'value' };
+  context.global = context;
+  context.metarequire = metavm.metarequire(context);
+  const metacontext = metavm.createContext(context);
+  const src = `({ 
+    field: metarequire('field'), 
+    notExist: metarequire('nothing'), 
+    mod: metarequire('./test/examples/nestedmodule1.js')
+  })`;
+  const ms = metavm.createScript('Example', src, { context: metacontext });
+  test.strictSame(ms.exports.field, 'value');
+  test.strictSame(ms.exports.notExist, undefined);
+  test.strictSame(ms.exports.mod.exports.value, 1);
+  test.strictSame(ms.exports.mod.exports.mod.exports.value, 2);
+  test.end();
+});
