@@ -1,5 +1,6 @@
 'use strict';
 
+const fs = require('fs');
 const metavm = require('..');
 const path = require('path');
 const metatests = require('metatests');
@@ -182,5 +183,59 @@ metatests.test('Call undefined as a function', async (test) => {
     test.strictSame(err.constructor.name, 'TypeError');
     test.strictSame(result, undefined);
   }
+  test.end();
+});
+
+metatests.test('Metarequire node internal module', async (test) => {
+  const sandbox = {};
+  sandbox.global = sandbox;
+  sandbox.require = metavm.metarequire(sandbox, { fs });
+  const context = metavm.createContext(sandbox);
+  const src = `({ fs: require('fs') })`;
+  const ms = metavm.createScript('Example', src, { context });
+  test.strictSame(typeof ms.exports, 'object');
+  test.strictSame(typeof ms.exports.fs.promises, 'object');
+  test.end();
+});
+
+metatests.test('Metarequire internal not permitted', async (test) => {
+  const sandbox = {};
+  sandbox.global = sandbox;
+  sandbox.require = metavm.metarequire(sandbox);
+  const context = metavm.createContext(sandbox);
+  const src = `({ fs: require('fs') })`;
+  try {
+    const ms = metavm.createScript('Example', src, { context });
+    test.strictSame(ms, undefined);
+  } catch (err) {
+    test.strictSame(err.message, `Cannot find module: 'fs'`);
+  }
+  test.end();
+});
+
+metatests.test('Metarequire non-existent module', async (test) => {
+  const sandbox = {};
+  sandbox.global = sandbox;
+  sandbox.require = metavm.metarequire(sandbox);
+  const context = metavm.createContext(sandbox);
+  const src = `({ notExist: require('nothing') })`;
+  try {
+    const ms = metavm.createScript('Example', src, { context });
+    test.strictSame(ms, undefined);
+  } catch (err) {
+    test.strictSame(err.message, `Cannot find module: 'nothing'`);
+  }
+  test.end();
+});
+
+metatests.test('Metarequire nestsed modules', async (test) => {
+  const sandbox = {};
+  sandbox.global = sandbox;
+  sandbox.require = metavm.metarequire(sandbox);
+  const context = metavm.createContext(sandbox);
+  const src = `({ loaded: require('./test/examples/nestedmodule1.js') })`;
+  const ms = metavm.createScript('Example', src, { context });
+  test.strictSame(ms.exports.loaded.exports.value, 1);
+  test.strictSame(ms.exports.loaded.exports.nested.exports.value, 2);
   test.end();
 });
