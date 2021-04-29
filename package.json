@@ -43,7 +43,7 @@
     "lint": "eslint . && prettier -c \"**/*.js\" \"**/*.json\" \"**/*.md\" \"**/.*rc\" \"**/*.ts\"",
     "types": "tsc -p tsconfig.json",
     "fmt": "prettier --write \"**/*.js\" \"**/*.json\" \"**/*.md\" \"**/.*rc\" \"**/*.ts\"",
-    "test": "npm run lint && npm run types && metatests test/"
+    "test": "npm run lint && npm run types && metatests test/unit.js"
   },
   "devDependencies": {
     "@types/node": "^17.0.21",
