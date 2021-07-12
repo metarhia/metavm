@@ -56,6 +56,16 @@ metatests.test('Load script', async (test) => {
   test.end();
 });
 
+metatests.test('Load empty script', async (test) => {
+  try {
+    const filePath = path.join(examples, 'simple');
+    await metavm.readScript(filePath);
+  } catch {
+    test.end();
+  }
+  test.fail('Should throw');
+});
+
 metatests.test('Load script with context and options', (test) => {
   const filePath = path.join(examples, 'complex.js');
   const context = metavm.createContext({ setTimeout });

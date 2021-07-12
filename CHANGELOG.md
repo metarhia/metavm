@@ -2,6 +2,8 @@
 
 ## [Unreleased][unreleased]
 
+- Throw SyntaxError on empty files
+
 ## [1.0.2][] - 2021-05-13
 
 - Update dependencies and fix security alert
