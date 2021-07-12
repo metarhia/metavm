@@ -4,7 +4,7 @@ export const EMPTY_CONTEXT: Context;
 export const COMMON_CONTEXT: Context;
 
 export function createContext(
-  context: Context,
+  context?: Context,
   preventEscape?: boolean
 ): Context;
 
