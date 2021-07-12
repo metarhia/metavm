@@ -3,6 +3,7 @@
 ## [Unreleased][unreleased]
 
 - Throw SyntaxError on empty files
+- Allow optional context
 
 ## [1.0.2][] - 2021-05-13
 
