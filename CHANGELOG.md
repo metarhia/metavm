@@ -4,6 +4,7 @@
 
 - Throw SyntaxError on empty files
 - Allow optional context
+- Move types to package root
 
 ## [1.0.2][] - 2021-05-13
 
