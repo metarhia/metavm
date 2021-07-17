@@ -15,14 +15,14 @@
     "isolation"
   ],
   "main": "metavm.js",
-  "types": "types/metavm.d.ts",
+  "types": "metavm.d.ts",
   "browser": {
     "./metavm.js": "./dist/metavm.js"
   },
   "files": [
     "dist/",
     "lib/",
-    "types/"
+    "metavm.d.ts"
   ],
   "engines": {
     "node": "^12.9 || 14 || 15"
@@ -42,7 +42,7 @@
   },
   "scripts": {
     "lint": "eslint . && prettier -c \"**/*.js\" \"**/*.json\" \"**/*.md\" \"**/.*rc\" \"**/*.ts\"",
-    "types": "tsc -p types/tsconfig.json",
+    "types": "tsc -p tsconfig.json",
     "fmt": "prettier --write \"**/*.js\" \"**/*.json\" \"**/*.md\" \"**/.*rc\" \"**/*.ts\"",
     "test": "npm run lint && npm run types && metatests test/"
   },
