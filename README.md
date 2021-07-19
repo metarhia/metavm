@@ -65,3 +65,9 @@ const metavm = require('.');
 //     exports: { field: 'value', add: [Function: add], sub: [Function: sub] }
 //   }
 ```
+
+## License & Contributors
+
+Copyright (c) 2020-2021 [Metarhia contributors](https://github.com/metarhia/metavm/graphs/contributors).
+Metavm is [MIT licensed](./LICENSE).\
+Metavm is a part of [Metarhia](https://github.com/metarhia) technology stack.
