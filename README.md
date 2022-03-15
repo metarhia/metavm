@@ -68,6 +68,6 @@ const metavm = require('.');
 
 ## License & Contributors
 
-Copyright (c) 2020-2021 [Metarhia contributors](https://github.com/metarhia/metavm/graphs/contributors).
+Copyright (c) 2020-2022 [Metarhia contributors](https://github.com/metarhia/metavm/graphs/contributors).
 Metavm is [MIT licensed](./LICENSE).\
 Metavm is a part of [Metarhia](https://github.com/metarhia) technology stack.
