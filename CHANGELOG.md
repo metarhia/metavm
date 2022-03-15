@@ -2,6 +2,8 @@
 
 ## [Unreleased][unreleased]
 
+- Move everything into a single file
+
 ## [1.0.3][] - 2021-07-19
 
 - Throw SyntaxError on empty files
