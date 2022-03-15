@@ -21,7 +21,6 @@
   },
   "files": [
     "dist/",
-    "lib/",
     "metavm.d.ts"
   ],
   "engines": {
