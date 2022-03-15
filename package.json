@@ -24,7 +24,7 @@
     "metavm.d.ts"
   ],
   "engines": {
-    "node": "^12.9 || 14 || 16"
+    "node": "^12.9 || 14 || 16 || 17"
   },
   "repository": {
     "type": "git",
