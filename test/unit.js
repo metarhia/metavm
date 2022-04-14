@@ -208,12 +208,12 @@ metatests.test('Metarequire internal not permitted', async (test) => {
     const ms = metavm.createScript('Example', src, { context });
     test.strictSame(ms, undefined);
   } catch (err) {
-    test.strictSame(err.message, `Cannot find module: 'fs'`);
+    test.strictSame(err.message, `Access denied: 'fs'`);
   }
   test.end();
 });
 
-metatests.test('Metarequire non-existent module', async (test) => {
+metatests.test('Metarequire not permitted module', async (test) => {
   const sandbox = {};
   sandbox.global = sandbox;
   sandbox.require = metavm.metarequire(sandbox);
@@ -223,7 +223,22 @@ metatests.test('Metarequire non-existent module', async (test) => {
     const ms = metavm.createScript('Example', src, { context });
     test.strictSame(ms, undefined);
   } catch (err) {
-    test.strictSame(err.message, `Cannot find module: 'nothing'`);
+    test.strictSame(err.message, `Access denied: 'nothing'`);
+  }
+  test.end();
+});
+
+metatests.test('Metarequire non-existent module', async (test) => {
+  const sandbox = {};
+  sandbox.global = sandbox;
+  sandbox.require = metavm.metarequire(sandbox, { metalog: true });
+  const context = metavm.createContext(sandbox);
+  const src = `({ notExist: require('metalog') })`;
+  try {
+    const ms = metavm.createScript('Example', src, { context });
+    test.strictSame(ms, undefined);
+  } catch (err) {
+    test.strictSame(err.message, `Cannot find module: 'metalog'`);
   }
   test.end();
 });
@@ -231,11 +246,44 @@ metatests.test('Metarequire non-existent module', async (test) => {
 metatests.test('Metarequire nestsed modules', async (test) => {
   const sandbox = {};
   sandbox.global = sandbox;
-  sandbox.require = metavm.metarequire(sandbox);
+  sandbox.require = metavm.metarequire(sandbox, {
+    './test/examples/nestedmodule1.js': true,
+    './test/examples/nestedmodule2.js': true,
+  });
   const context = metavm.createContext(sandbox);
   const src = `({ loaded: require('./test/examples/nestedmodule1.js') })`;
   const ms = metavm.createScript('Example', src, { context });
   test.strictSame(ms.exports.loaded.exports.value, 1);
   test.strictSame(ms.exports.loaded.exports.nested.exports.value, 2);
+  test.end();
+});
+
+metatests.test('Metarequire nestsed not permitted', async (test) => {
+  const sandbox = {};
+  sandbox.global = sandbox;
+  sandbox.require = metavm.metarequire(sandbox, {
+    './test/examples/nestedmodule1.js': true,
+  });
+  const context = metavm.createContext(sandbox);
+  const src = `({ loaded: require('./test/examples/nestedmodule1.js') })`;
+  try {
+    const ms = metavm.createScript('Example', src, { context });
+    test.fail('Should not be loaded', ms);
+  } catch (err) {
+    const module2 = './test/examples/nestedmodule2.js';
+    test.strictSame(err.message, `Access denied: '${module2}'`);
+  }
+  test.end();
+});
+
+metatests.test('Metarequire nestsed npm modules', async (test) => {
+  const sandbox = {};
+  sandbox.global = sandbox;
+  const permitted = { metatests: true };
+  sandbox.require = metavm.metarequire(sandbox, permitted);
+  const context = metavm.createContext(sandbox);
+  const src = `({ loaded: require('metatests') })`;
+  const ms = metavm.createScript('Example', src, { context });
+  test.strictSame(typeof ms.exports, 'object');
   test.end();
 });

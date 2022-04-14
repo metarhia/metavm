@@ -62,9 +62,11 @@ const readScript = async (filePath, options) => {
 
 const metarequire = (context, permitted = {}) => {
   const require = (module) => {
-    if (Reflect.has(permitted, module)) {
-      return Reflect.get(permitted, module);
+    const lib = Reflect.get(permitted, module);
+    if (lib === undefined || lib === false) {
+      throw new Error(`Access denied: '${module}'`);
     }
+    if (lib !== true) return lib;
     try {
       const src = fs.readFileSync(module, 'utf8');
       const script = createScript(module, src, { context });
