@@ -4,6 +4,7 @@
 
 - Implement metarequire and require nesting
 - Support permissions for node.js modules (including internal but not for npm)
+- Update dependencies and apply security fixes
 
 ## [1.1.0][] - 2022-03-15
 
