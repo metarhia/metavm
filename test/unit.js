@@ -7,6 +7,8 @@ const metatests = require('metatests');
 
 const examples = path.join(__dirname, 'examples');
 
+const SCRIPT_FIELDS = ['name', 'type', 'script', 'context', 'exports'];
+
 metatests.test('MetaScript constructor', async (test) => {
   const src = `({ field: 'value' });`;
   const ms = new metavm.MetaScript('Example', src);
@@ -14,7 +16,7 @@ metatests.test('MetaScript constructor', async (test) => {
   test.strictSame(typeof ms.exports, 'object');
 
   const fields = Object.keys(ms);
-  test.strictSame(fields, ['name', 'script', 'context', 'exports']);
+  test.strictSame(fields, SCRIPT_FIELDS);
 
   const keys = Object.keys(ms.exports);
   test.strictSame(keys, ['field']);
@@ -30,7 +32,7 @@ metatests.test('MetaScript factory', async (test) => {
   test.strictSame(typeof ms.exports, 'object');
 
   const fields = Object.keys(ms);
-  test.strictSame(fields, ['name', 'script', 'context', 'exports']);
+  test.strictSame(fields, SCRIPT_FIELDS);
 
   const keys = Object.keys(ms.exports);
   test.strictSame(keys, ['field']);
@@ -46,7 +48,7 @@ metatests.test('Load script', async (test) => {
   test.strictSame(typeof ms.exports, 'object');
 
   const fields = Object.keys(ms);
-  test.strictSame(fields, ['name', 'script', 'context', 'exports']);
+  test.strictSame(fields, SCRIPT_FIELDS);
 
   const keys = Object.keys(ms.exports);
   test.strictSame(keys, ['field', 'add', 'sub']);
@@ -90,7 +92,7 @@ metatests.test('Load function', async (test) => {
   test.strictSame(typeof ms.exports, 'function');
 
   const fields = Object.keys(ms);
-  test.strictSame(fields, ['name', 'script', 'context', 'exports']);
+  test.strictSame(fields, SCRIPT_FIELDS);
 
   test.strictSame(ms.exports(2, 3), 6);
   test.strictSame(ms.exports.bind(this, 3)(4), 12);
@@ -262,8 +264,8 @@ metatests.test('Metarequire nestsed modules', async (test) => {
   const context = metavm.createContext(sandbox);
   const src = `({ loaded: require('./examples/nestedmodule1.js') })`;
   const ms = metavm.createScript('Example', src, { context });
-  test.strictSame(ms.exports.loaded.value, 1);
-  test.strictSame(ms.exports.loaded.nested.value, 2);
+  test.strictSame(ms.exports.loaded.exports.value, 1);
+  test.strictSame(ms.exports.loaded.exports.nested.exports.value, 2);
   test.end();
 });
 
@@ -286,5 +288,24 @@ metatests.test('Metarequire nestsed not permitted', async (test) => {
     const module2 = './nestedmodule2.js';
     test.strictSame(err.message, `Access denied '${module2}'`);
   }
+  test.end();
+});
+
+metatests.test('Metarequire nestsed npm modules', async (test) => {
+  const sandbox = {};
+  sandbox.global = sandbox;
+  const context = metavm.createContext(sandbox);
+  sandbox.require = metavm.metarequire({
+    dirname: __dirname,
+    context,
+    access: {
+      metatests: true,
+      domain: true,
+      '@metarhia/common': true,
+    },
+  });
+  const src = `({ loaded: require('metatests') })`;
+  const ms = metavm.createScript('Example', src, { context });
+  test.strictSame(typeof ms.exports, 'object');
   test.end();
 });
