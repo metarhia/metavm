@@ -3,6 +3,8 @@ import { Context, Script, ScriptOptions, BaseOptions } from 'vm';
 export const EMPTY_CONTEXT: Context;
 export const COMMON_CONTEXT: Context;
 
+export class MetavmError extends Error {}
+
 export function createContext(
   context?: Context,
   preventEscape?: boolean
@@ -30,3 +32,10 @@ export function readScript(
   filePath: string,
   options?: BaseOptions
 ): Promise<MetaScript>;
+
+export function metarequire(options: {
+  dirname: string;
+  relative: string;
+  context: Context;
+  access: object;
+}): MetaScript;
