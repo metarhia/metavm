@@ -4,11 +4,19 @@ const vm = require('vm');
 const fs = require('fs');
 const fsp = fs.promises;
 const path = require('path');
+const metautil = require('metautil');
 
 const RUN_OPTIONS = { timeout: 5000, displayErrors: false };
 const CONTEXT_OPTIONS = { microtaskMode: 'afterEvaluate' };
 const USE_STRICT = `'use strict';\n`;
 const CURDIR = '.' + path.sep;
+const SRC_BEFORE = '((exports, require, module, __filename, __dirname) => { ';
+const SRC_AFTER = '\n});';
+
+const MODULE_TYPE = {
+  METARHIA: 1,
+  COMMONJS: 2,
+};
 
 const EMPTY_CONTEXT = vm.createContext(Object.freeze({}));
 
@@ -37,16 +45,33 @@ const createContext = (context, preventEscape = false) => {
   return vm.createContext(context, preventEscape ? CONTEXT_OPTIONS : {});
 };
 
+const wrapSource = (src) => SRC_BEFORE + src + SRC_AFTER;
+
+const useStrict = (src) => (src.startsWith(USE_STRICT) ? '' : USE_STRICT);
+
 class MetaScript {
   constructor(name, src, options = {}) {
-    const strict = src.startsWith(USE_STRICT);
-    const code = strict ? src : USE_STRICT + src;
-    const lineOffset = strict ? 0 : -1;
     this.name = name;
+    this.type = options.type || MODULE_TYPE.METARHIA;
+    const common = this.type === MODULE_TYPE.COMMONJS;
+    const strict = useStrict(src);
+    const code = common ? wrapSource(src) : src;
+    const lineOffset = strict === '' ? 0 : -1;
     const scriptOptions = { filename: name, ...options, lineOffset };
-    this.script = new vm.Script(code, scriptOptions);
+    this.script = new vm.Script(strict + code, scriptOptions);
     this.context = options.context || createContext();
-    this.exports = this.script.runInContext(this.context, RUN_OPTIONS);
+    const exports = this.script.runInContext(this.context, RUN_OPTIONS);
+    this.exports = common ? this.commonExports(exports) : exports;
+  }
+
+  commonExports(closure) {
+    const exports = {};
+    const module = { exports };
+    const { require } = this.context;
+    const __filename = this.name;
+    const __dirname = path.dirname(__filename);
+    closure(exports, require, module, __filename, __dirname);
+    return module.exports || exports;
   }
 }
 
@@ -66,13 +91,15 @@ const readScript = async (filePath, options) => {
 const internalRequire = require;
 
 const checkAccess = (access, name) => {
+  const dir = path.sep === '/' ? name : metautil.replace(name, '\\', '/');
   for (const key of Object.keys(access)) {
-    if (name.startsWith(key)) return Reflect.get(access, key);
+    const location = path.sep === '/' ? key : metautil.replace(key, '\\', '/');
+    if (dir.startsWith(location)) return Reflect.get(access, key);
   }
 };
 
 const metarequire = (options) => {
-  const { dirname = process.cwd(), relative = '.' } = options;
+  const { dirname = process.cwd(), relative = '.', type } = options;
   const context = createContext({ ...options.context });
   const access = { ...options.access };
 
@@ -102,12 +129,15 @@ const metarequire = (options) => {
         const dirname = relative;
         const access = { ...options.access, [CURDIR]: true };
         relative = '.';
-        context.require = metarequire({ dirname, relative, context, access });
+        const opt = { dirname, relative, context, access, type };
+        context.require = metarequire(opt);
       } else {
-        context.require = metarequire({ dirname, relative, context, access });
+        const opt = { dirname, relative, context, access, type };
+        context.require = metarequire(opt);
       }
       const src = fs.readFileSync(absolute, 'utf8');
-      const script = createScript(module, src, { context });
+      const opt = { context: createContext(context), type };
+      const script = createScript(module, src, opt);
       return script.exports;
     } catch (err) {
       if (err instanceof MetavmError) throw err;
@@ -124,6 +154,7 @@ module.exports = {
   createScript,
   EMPTY_CONTEXT,
   COMMON_CONTEXT,
+  MODULE_TYPE,
   readScript,
   metarequire,
 };

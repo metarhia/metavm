@@ -10,7 +10,13 @@ export function createContext(
   preventEscape?: boolean
 ): Context;
 
+declare enum ModuleType {
+  METARHIA = 1,
+  COMMONJS = 2,
+}
+
 export interface MetaScriptOptions extends ScriptOptions {
+  type?: ModuleType;
   context: Context;
 }
 
