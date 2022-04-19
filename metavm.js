@@ -8,6 +8,7 @@ const path = require('path');
 const RUN_OPTIONS = { timeout: 5000, displayErrors: false };
 const CONTEXT_OPTIONS = { microtaskMode: 'afterEvaluate' };
 const USE_STRICT = `'use strict';\n`;
+const CURDIR = '.' + path.sep;
 
 const EMPTY_CONTEXT = vm.createContext(Object.freeze({}));
 
@@ -82,13 +83,13 @@ const metarequire = (options) => {
     const npm = !name.includes('.');
     if (!npm) {
       name = path.resolve(dirname, relative, module);
-      let rel = './' + path.relative(dirname, name);
+      let rel = CURDIR + path.relative(dirname, name);
       lib = checkAccess(access, rel);
       if (lib instanceof Object) return lib;
       const ext = name.toLocaleLowerCase().endsWith('.js') ? '' : '.js';
       const js = name + ext;
       name = name.startsWith('.') ? path.resolve(dirname, js) : js;
-      rel = './' + path.relative(dirname, js);
+      rel = CURDIR + path.relative(dirname, js);
       lib = checkAccess(access, rel);
       if (lib instanceof Object) return lib;
     }
@@ -99,7 +100,7 @@ const metarequire = (options) => {
       let relative = path.dirname(absolute);
       if (npm) {
         const dirname = relative;
-        const access = { ...options.access, './': true };
+        const access = { ...options.access, [CURDIR]: true };
         relative = '.';
         context.require = metarequire({ dirname, relative, context, access });
       } else {
