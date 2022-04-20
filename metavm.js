@@ -4,7 +4,6 @@ const vm = require('vm');
 const fs = require('fs');
 const fsp = fs.promises;
 const path = require('path');
-const metautil = require('metautil');
 
 const RUN_OPTIONS = { timeout: 5000, displayErrors: false };
 const CONTEXT_OPTIONS = { microtaskMode: 'afterEvaluate' };
@@ -91,9 +90,9 @@ const readScript = async (filePath, options) => {
 const internalRequire = require;
 
 const checkAccess = (access, name) => {
-  const dir = path.sep === '/' ? name : metautil.replace(name, '\\', '/');
+  const dir = path.join(name);
   for (const key of Object.keys(access)) {
-    const location = path.sep === '/' ? key : metautil.replace(key, '\\', '/');
+    const location = path.join(key);
     if (dir.startsWith(location)) return Reflect.get(access, key);
   }
 };
