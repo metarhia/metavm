@@ -200,7 +200,7 @@ metatests.test('Call undefined as a function', async (test) => {
 metatests.test('Metarequire node internal module', async (test) => {
   const sandbox = {};
   sandbox.global = sandbox;
-  const src = `const fs =require('fs');`;
+  const src = `const fs = require('fs'); module.exports = { fs };`;
   const ms = metavm.createScript('Example', src, {
     context: metavm.createContext(sandbox),
     dirname: __dirname,
