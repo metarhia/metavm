@@ -7,7 +7,16 @@ const metatests = require('metatests');
 
 const examples = path.join(__dirname, 'examples');
 
-const SCRIPT_FIELDS = ['name', 'type', 'script', 'context', 'exports'];
+const SCRIPT_FIELDS = [
+  'name',
+  'dirname',
+  'relative',
+  'type',
+  'access',
+  'script',
+  'context',
+  'exports',
+];
 
 metatests.test('MetaScript constructor', async (test) => {
   const src = `({ field: 'value' });`;
@@ -191,28 +200,28 @@ metatests.test('Call undefined as a function', async (test) => {
 metatests.test('Metarequire node internal module', async (test) => {
   const sandbox = {};
   sandbox.global = sandbox;
-  sandbox.require = metavm.metarequire({
+  const src = `const fs =require('fs');`;
+  const ms = metavm.createScript('Example', src, {
+    context: metavm.createContext(sandbox),
     dirname: __dirname,
-    context: sandbox,
     access: { fs },
+    type: metavm.MODULE_TYPE.COMMONJS,
   });
-  const options = { context: metavm.createContext(sandbox) };
-  const src = `({ fs: require('fs') })`;
-  const ms = metavm.createScript('Example', src, options);
   test.strictSame(typeof ms.exports, 'object');
   test.strictSame(typeof ms.exports.fs.promises, 'object');
   test.end();
 });
 
 metatests.test('Metarequire internal not permitted', async (test) => {
-  const sandbox = {};
-  sandbox.global = sandbox;
-  const options = { dirname: __dirname, context: sandbox };
-  sandbox.require = metavm.metarequire(options);
-  const src = `({ fs: require('fs') })`;
   try {
-    const options = { context: metavm.createContext(sandbox) };
-    const ms = metavm.createScript('Example', src, options);
+    const sandbox = {};
+    sandbox.global = sandbox;
+    const src = `const fs = require('fs');`;
+    const ms = metavm.createScript('Example', src, {
+      context: metavm.createContext(sandbox),
+      dirname: __dirname,
+      type: metavm.MODULE_TYPE.COMMONJS,
+    });
     test.strictSame(ms, undefined);
   } catch (err) {
     test.strictSame(err.message, `Access denied 'fs'`);
@@ -220,15 +229,16 @@ metatests.test('Metarequire internal not permitted', async (test) => {
   test.end();
 });
 
-metatests.test('Metarequire not permitted module', async (test) => {
-  const sandbox = {};
-  sandbox.global = sandbox;
-  const options = { dirname: __dirname, context: sandbox };
-  sandbox.require = metavm.metarequire(options);
-  const context = metavm.createContext(sandbox);
-  const src = `({ notExist: require('nothing') })`;
+metatests.test('Metarequire non-existent not permitted', async (test) => {
   try {
-    const ms = metavm.createScript('Example', src, { context });
+    const sandbox = {};
+    sandbox.global = sandbox;
+    const src = `const notExist = require('nothing');`;
+    const ms = metavm.createScript('Example', src, {
+      context: metavm.createContext(sandbox),
+      dirname: __dirname,
+      type: metavm.MODULE_TYPE.COMMONJS,
+    });
     test.strictSame(ms, undefined);
   } catch (err) {
     test.strictSame(err.message, `Access denied 'nothing'`);
@@ -237,17 +247,16 @@ metatests.test('Metarequire not permitted module', async (test) => {
 });
 
 metatests.test('Metarequire non-existent module', async (test) => {
-  const sandbox = {};
-  sandbox.global = sandbox;
-  sandbox.require = metavm.metarequire({
-    dirname: __dirname,
-    context: sandbox,
-    access: { metalog: true },
-  });
-  const context = metavm.createContext(sandbox);
-  const src = `({ notExist: require('metalog') })`;
   try {
-    const ms = metavm.createScript('Example', src, { context });
+    const sandbox = {};
+    sandbox.global = sandbox;
+    const src = `const notExist = require('metalog');`;
+    const ms = metavm.createScript('Example', src, {
+      context: metavm.createContext(sandbox),
+      dirname: __dirname,
+      access: { metalog: true },
+      type: metavm.MODULE_TYPE.COMMONJS,
+    });
     test.strictSame(ms, undefined);
   } catch (err) {
     test.strictSame(err.message, `Cannot find module 'metalog'`);
@@ -258,37 +267,34 @@ metatests.test('Metarequire non-existent module', async (test) => {
 metatests.test('Metarequire nestsed commonjs modules', async (test) => {
   const sandbox = {};
   sandbox.global = sandbox;
-  const access = {
-    './examples/nestedmodule1.js': true,
-    './examples/nestedmodule2.js': true,
-  };
-  const type = metavm.MODULE_TYPE.COMMONJS;
-  const opt = { dirname: __dirname, context: sandbox, access, type };
-  sandbox.require = metavm.metarequire(opt);
-  const context = metavm.createContext(sandbox);
   const src = `module.exports = require('./examples/nestedmodule1.js');`;
-  const ms = metavm.createScript('Example', src, { context, type });
+  const ms = metavm.createScript('Example', src, {
+    context: metavm.createContext(sandbox),
+    dirname: __dirname,
+    access: {
+      './examples/nestedmodule1.js': true,
+      './examples/nestedmodule2.js': true,
+    },
+    type: metavm.MODULE_TYPE.COMMONJS,
+  });
   test.strictSame(ms.exports.value, 1);
   test.strictSame(ms.exports.nested.value, 2);
   test.end();
 });
 
 metatests.test('Metarequire nestsed not permitted', async (test) => {
-  const sandbox = {};
-  sandbox.global = sandbox;
-  const type = metavm.MODULE_TYPE.COMMONJS;
-  sandbox.require = metavm.metarequire({
-    dirname: __dirname,
-    context: sandbox,
-    access: {
-      './examples/nestedmodule1.js': true,
-    },
-    type,
-  });
-  const context = metavm.createContext(sandbox);
-  const src = `module.exports = require('./examples/nestedmodule1.js');`;
   try {
-    const ms = metavm.createScript('Example', src, { context, type });
+    const sandbox = {};
+    sandbox.global = sandbox;
+    const src = `module.exports = require('./examples/nestedmodule1.js');`;
+    const ms = metavm.createScript('Example', src, {
+      context: metavm.createContext(sandbox),
+      dirname: __dirname,
+      access: {
+        './examples/nestedmodule1.js': true,
+      },
+      type: metavm.MODULE_TYPE.COMMONJS,
+    });
     test.fail('Should not be loaded', ms);
   } catch (err) {
     const module2 = './nestedmodule2.js';
@@ -300,18 +306,15 @@ metatests.test('Metarequire nestsed not permitted', async (test) => {
 metatests.test('Metarequire nestsed npm modules', async (test) => {
   const sandbox = {};
   sandbox.global = sandbox;
-  const context = metavm.createContext(sandbox);
-  const type = metavm.MODULE_TYPE.COMMONJS;
-  sandbox.require = metavm.metarequire({
+  const src = `module.exports = require('inherits');`;
+  const ms = metavm.createScript('Example', src, {
     dirname: __dirname,
-    context: sandbox,
+    context: metavm.createContext(sandbox),
     access: {
       inherits: true,
     },
-    type,
+    type: metavm.MODULE_TYPE.COMMONJS,
   });
-  const src = `module.exports = require('inherits');`;
-  const ms = metavm.createScript('Example', src, { context, type });
   test.strictSame(typeof ms.exports, 'function');
   test.end();
 });

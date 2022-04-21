@@ -48,10 +48,15 @@ const wrapSource = (src) => SRC_BEFORE + src + SRC_AFTER;
 
 const useStrict = (src) => (src.startsWith(USE_STRICT) ? '' : USE_STRICT);
 
+const internalRequire = require;
+
 class MetaScript {
   constructor(name, src, options = {}) {
     this.name = name;
+    this.dirname = options.dirname || process.cwd();
+    this.relative = options.relative || '.';
     this.type = options.type || MODULE_TYPE.METARHIA;
+    this.access = options.access || {};
     const common = this.type === MODULE_TYPE.COMMONJS;
     const strict = useStrict(src);
     const code = common ? wrapSource(src) : src;
@@ -66,11 +71,63 @@ class MetaScript {
   commonExports(closure) {
     const exports = {};
     const module = { exports };
-    const { require } = this.context;
+    const require = this.createRequire();
     const __filename = this.name;
     const __dirname = path.dirname(__filename);
     closure(exports, require, module, __filename, __dirname);
     return module.exports || exports;
+  }
+
+  checkAccess(name) {
+    const dir = path.join(name);
+    for (const key of Object.keys(this.access)) {
+      const location = path.join(key);
+      if (dir.startsWith(location)) {
+        return Reflect.get(this.access, key);
+      }
+    }
+  }
+
+  createRequire() {
+    const require = (module) => {
+      let name = module;
+      let { dirname, relative, access } = this;
+      let lib = this.checkAccess(name);
+      if (lib instanceof Object) return lib;
+      const npm = !name.includes('.');
+      if (!npm) {
+        name = path.resolve(dirname, relative, module);
+        let rel = CURDIR + path.relative(dirname, name);
+        lib = this.checkAccess(rel);
+        if (lib instanceof Object) return lib;
+        const ext = name.toLocaleLowerCase().endsWith('.js') ? '' : '.js';
+        const js = name + ext;
+        name = name.startsWith('.') ? path.resolve(this.dirname, js) : js;
+        rel = CURDIR + path.relative(dirname, js);
+        lib = this.checkAccess(rel);
+        if (lib instanceof Object) return lib;
+      }
+      if (!lib) throw new MetavmError(`Access denied '${module}'`);
+      try {
+        const absolute = internalRequire.resolve(name);
+        if (npm && absolute === name) return internalRequire(name);
+        relative = path.dirname(absolute);
+        if (npm) {
+          dirname = relative;
+          access = { ...access, [CURDIR]: true };
+          relative = '.';
+        }
+        const src = fs.readFileSync(absolute, 'utf8');
+        const { context, type } = this;
+        const opt = { context, type, dirname, relative, access };
+        const script = new MetaScript(name, src, opt);
+        return script.exports;
+      } catch (err) {
+        if (err instanceof MetavmError) throw err;
+        throw new MetavmError(`Cannot find module '${module}'`);
+      }
+    };
+    return require;
   }
 }
 
@@ -87,66 +144,6 @@ const readScript = async (filePath, options) => {
   return script;
 };
 
-const internalRequire = require;
-
-const checkAccess = (access, name) => {
-  const dir = path.join(name);
-  for (const key of Object.keys(access)) {
-    const location = path.join(key);
-    if (dir.startsWith(location)) return Reflect.get(access, key);
-  }
-};
-
-const metarequire = (options) => {
-  const { dirname = process.cwd(), relative = '.', type } = options;
-  const context = createContext({ ...options.context });
-  const access = { ...options.access };
-
-  const require = (module) => {
-    let name = module;
-    let lib = checkAccess(access, name);
-    if (lib instanceof Object) return lib;
-    const npm = !name.includes('.');
-    if (!npm) {
-      name = path.resolve(dirname, relative, module);
-      let rel = CURDIR + path.relative(dirname, name);
-      lib = checkAccess(access, rel);
-      if (lib instanceof Object) return lib;
-      const ext = name.toLocaleLowerCase().endsWith('.js') ? '' : '.js';
-      const js = name + ext;
-      name = name.startsWith('.') ? path.resolve(dirname, js) : js;
-      rel = CURDIR + path.relative(dirname, js);
-      lib = checkAccess(access, rel);
-      if (lib instanceof Object) return lib;
-    }
-    if (!lib) throw new MetavmError(`Access denied '${module}'`);
-    try {
-      const absolute = internalRequire.resolve(name);
-      if (npm && absolute === name) return internalRequire(name);
-      let relative = path.dirname(absolute);
-      if (npm) {
-        const dirname = relative;
-        const access = { ...options.access, [CURDIR]: true };
-        relative = '.';
-        const opt = { dirname, relative, context, access, type };
-        context.require = metarequire(opt);
-      } else {
-        const opt = { dirname, relative, context, access, type };
-        context.require = metarequire(opt);
-      }
-      const src = fs.readFileSync(absolute, 'utf8');
-      const opt = { context: createContext(context), type };
-      const script = createScript(module, src, opt);
-      return script.exports;
-    } catch (err) {
-      if (err instanceof MetavmError) throw err;
-      throw new MetavmError(`Cannot find module '${module}'`);
-    }
-  };
-
-  return require;
-};
-
 module.exports = {
   createContext,
   MetaScript,
@@ -155,5 +152,4 @@ module.exports = {
   COMMON_CONTEXT,
   MODULE_TYPE,
   readScript,
-  metarequire,
 };
