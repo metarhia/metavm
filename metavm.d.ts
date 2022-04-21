@@ -17,7 +17,10 @@ declare enum ModuleType {
 
 export interface MetaScriptOptions extends ScriptOptions {
   type?: ModuleType;
-  context: Context;
+  dirname?: string;
+  relative?: string;
+  context?: Context;
+  access?: object;
 }
 
 export class MetaScript {
@@ -38,10 +41,3 @@ export function readScript(
   filePath: string,
   options?: BaseOptions
 ): Promise<MetaScript>;
-
-export function metarequire(options: {
-  dirname: string;
-  relative: string;
-  context: Context;
-  access: object;
-}): MetaScript;
