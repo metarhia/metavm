@@ -214,8 +214,6 @@ metatests.test('Access for node internal module', async (test) => {
 });
 
 metatests.test('Access for stub module', async (test) => {
-  const sandbox = {};
-  sandbox.global = sandbox;
   const src = `
     const fs = require('fs');
     module.exports = {
@@ -229,8 +227,6 @@ metatests.test('Access for stub module', async (test) => {
     };
   `;
   const ms = metavm.createScript('Example', src, {
-    context: metavm.createContext(sandbox),
-    dirname: __dirname,
     access: {
       fs: {
         readFile(filename, callback) {
@@ -247,12 +243,8 @@ metatests.test('Access for stub module', async (test) => {
 
 metatests.test('Access internal not permitted', async (test) => {
   try {
-    const sandbox = {};
-    sandbox.global = sandbox;
     const src = `const fs = require('fs');`;
     const ms = metavm.createScript('Example', src, {
-      context: metavm.createContext(sandbox),
-      dirname: __dirname,
       type: metavm.MODULE_TYPE.COMMONJS,
     });
     test.strictSame(ms, undefined);
@@ -264,12 +256,8 @@ metatests.test('Access internal not permitted', async (test) => {
 
 metatests.test('Access non-existent not permitted', async (test) => {
   try {
-    const sandbox = {};
-    sandbox.global = sandbox;
     const src = `const notExist = require('nothing');`;
     const ms = metavm.createScript('Example', src, {
-      context: metavm.createContext(sandbox),
-      dirname: __dirname,
       type: metavm.MODULE_TYPE.COMMONJS,
     });
     test.strictSame(ms, undefined);
@@ -281,12 +269,8 @@ metatests.test('Access non-existent not permitted', async (test) => {
 
 metatests.test('Access non-existent module', async (test) => {
   try {
-    const sandbox = {};
-    sandbox.global = sandbox;
     const src = `const notExist = require('metalog');`;
     const ms = metavm.createScript('Example', src, {
-      context: metavm.createContext(sandbox),
-      dirname: __dirname,
       access: {
         metalog: true,
       },
@@ -318,11 +302,8 @@ metatests.test('Access nestsed commonjs', async (test) => {
 });
 
 metatests.test('Access folder (path prefix)', async (test) => {
-  const sandbox = {};
-  sandbox.global = sandbox;
   const src = `module.exports = require('./examples/nestedmodule1.js');`;
   const ms = metavm.createScript('Example', src, {
-    context: metavm.createContext(sandbox),
     dirname: __dirname,
     access: {
       './examples': true,
@@ -350,11 +331,8 @@ metatests.test('Access with readScript', async (test) => {
 
 metatests.test('Access nestsed not permitted', async (test) => {
   try {
-    const sandbox = {};
-    sandbox.global = sandbox;
     const src = `module.exports = require('./examples/nestedmodule1.js');`;
     const ms = metavm.createScript('Example', src, {
-      context: metavm.createContext(sandbox),
       dirname: __dirname,
       access: {
         './examples/nestedmodule1.js': true,
@@ -370,12 +348,8 @@ metatests.test('Access nestsed not permitted', async (test) => {
 });
 
 metatests.test('Access nestsed npm modules', async (test) => {
-  const sandbox = {};
-  sandbox.global = sandbox;
   const src = `module.exports = require('inherits');`;
   const ms = metavm.createScript('Example', src, {
-    dirname: __dirname,
-    context: metavm.createContext(sandbox),
     access: {
       inherits: true,
     },
