@@ -302,7 +302,7 @@ metatests.test('Access non-existent module', async (test) => {
 metatests.test('Access nestsed commonjs', async (test) => {
   const sandbox = {};
   sandbox.global = sandbox;
-  const src = `module.exports = require('./examples/nestedmodule1.js');`;
+  const src = `module.exports = require('./examples/nestedmodule1');`;
   const ms = metavm.createScript('Example', src, {
     context: metavm.createContext(sandbox),
     dirname: __dirname,
