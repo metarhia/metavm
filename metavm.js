@@ -96,20 +96,20 @@ class MetaScript {
   createRequire() {
     const { context, type } = this;
     let { dirname, relative, access } = this;
+    const rel = (s) => CURDIR + path.relative(dirname, s);
     const require = (module) => {
       let name = module;
       let lib = this.checkAccess(name);
       if (lib instanceof Object) return lib;
       const npm = !name.includes('.');
       if (!npm) {
-        name = path.resolve(dirname, relative, module);
-        lib = this.checkAccess(CURDIR + path.relative(dirname, name));
+        name = path.resolve(dirname, relative, name);
+        lib = this.checkAccess(rel(name));
         if (lib instanceof Object) return lib;
-        const js = addExt(name);
-        name = name.startsWith('.') ? path.resolve(dirname, js) : js;
-        lib = this.checkAccess(CURDIR + path.relative(dirname, js));
+        lib = this.checkAccess(rel(addExt(name)));
         if (lib instanceof Object) return lib;
       }
+      console.log({ name });
       if (!lib) throw new MetavmError(`Access denied '${module}'`);
       try {
         const absolute = internalRequire.resolve(name);
