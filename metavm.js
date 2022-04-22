@@ -48,6 +48,11 @@ const wrapSource = (src) => SRC_BEFORE + src + SRC_AFTER;
 
 const useStrict = (src) => (src.startsWith(USE_STRICT) ? '' : USE_STRICT);
 
+const addExt = (name) => {
+  if (name.toLocaleLowerCase().endsWith('.js')) return name;
+  return name + '.js';
+};
+
 const internalRequire = require;
 
 class MetaScript {
@@ -89,22 +94,20 @@ class MetaScript {
   }
 
   createRequire() {
+    const { context, type } = this;
+    let { dirname, relative, access } = this;
     const require = (module) => {
       let name = module;
-      let { dirname, relative, access } = this;
       let lib = this.checkAccess(name);
       if (lib instanceof Object) return lib;
       const npm = !name.includes('.');
       if (!npm) {
         name = path.resolve(dirname, relative, module);
-        let rel = CURDIR + path.relative(dirname, name);
-        lib = this.checkAccess(rel);
+        lib = this.checkAccess(CURDIR + path.relative(dirname, name));
         if (lib instanceof Object) return lib;
-        const ext = name.toLocaleLowerCase().endsWith('.js') ? '' : '.js';
-        const js = name + ext;
-        name = name.startsWith('.') ? path.resolve(this.dirname, js) : js;
-        rel = CURDIR + path.relative(dirname, js);
-        lib = this.checkAccess(rel);
+        const js = addExt(name);
+        name = name.startsWith('.') ? path.resolve(dirname, js) : js;
+        lib = this.checkAccess(CURDIR + path.relative(dirname, js));
         if (lib instanceof Object) return lib;
       }
       if (!lib) throw new MetavmError(`Access denied '${module}'`);
@@ -118,7 +121,6 @@ class MetaScript {
           relative = '.';
         }
         const src = fs.readFileSync(absolute, 'utf8');
-        const { context, type } = this;
         const opt = { context, type, dirname, relative, access };
         const script = new MetaScript(name, src, opt);
         return script.exports;
