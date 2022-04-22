@@ -1,6 +1,5 @@
 'use strict';
 
-const fs = require('fs');
 const metavm = require('..');
 const path = require('path');
 const metatests = require('metatests');
@@ -197,14 +196,16 @@ metatests.test('Call undefined as a function', async (test) => {
   test.end();
 });
 
-metatests.test('Metarequire node internal module', async (test) => {
+metatests.test('Access for node internal module', async (test) => {
   const sandbox = {};
   sandbox.global = sandbox;
-  const src = `const fs = require('fs'); module.exports = { fs };`;
+  const src = `module.exports = { fs: require('fs') };`;
   const ms = metavm.createScript('Example', src, {
     context: metavm.createContext(sandbox),
     dirname: __dirname,
-    access: { fs },
+    access: {
+      fs: true,
+    },
     type: metavm.MODULE_TYPE.COMMONJS,
   });
   test.strictSame(typeof ms.exports, 'object');
@@ -212,7 +213,39 @@ metatests.test('Metarequire node internal module', async (test) => {
   test.end();
 });
 
-metatests.test('Metarequire internal not permitted', async (test) => {
+metatests.test('Access for stub module', async (test) => {
+  const sandbox = {};
+  sandbox.global = sandbox;
+  const src = `
+    const fs = require('fs');
+    module.exports = {
+      async useStub() {
+        return new Promise((resolve) => {
+          fs.readFile('name', (err, data) => {
+            resolve(data);
+          });
+        });
+      }
+    };
+  `;
+  const ms = metavm.createScript('Example', src, {
+    context: metavm.createContext(sandbox),
+    dirname: __dirname,
+    access: {
+      fs: {
+        readFile(filename, callback) {
+          callback(null, 'stub-content');
+        },
+      },
+    },
+    type: metavm.MODULE_TYPE.COMMONJS,
+  });
+  const res = await ms.exports.useStub();
+  test.strictSame(res, 'stub-content');
+  test.end();
+});
+
+metatests.test('Access internal not permitted', async (test) => {
   try {
     const sandbox = {};
     sandbox.global = sandbox;
@@ -229,7 +262,7 @@ metatests.test('Metarequire internal not permitted', async (test) => {
   test.end();
 });
 
-metatests.test('Metarequire non-existent not permitted', async (test) => {
+metatests.test('Access non-existent not permitted', async (test) => {
   try {
     const sandbox = {};
     sandbox.global = sandbox;
@@ -246,7 +279,7 @@ metatests.test('Metarequire non-existent not permitted', async (test) => {
   test.end();
 });
 
-metatests.test('Metarequire non-existent module', async (test) => {
+metatests.test('Access non-existent module', async (test) => {
   try {
     const sandbox = {};
     sandbox.global = sandbox;
@@ -254,7 +287,9 @@ metatests.test('Metarequire non-existent module', async (test) => {
     const ms = metavm.createScript('Example', src, {
       context: metavm.createContext(sandbox),
       dirname: __dirname,
-      access: { metalog: true },
+      access: {
+        metalog: true,
+      },
       type: metavm.MODULE_TYPE.COMMONJS,
     });
     test.strictSame(ms, undefined);
@@ -264,7 +299,7 @@ metatests.test('Metarequire non-existent module', async (test) => {
   test.end();
 });
 
-metatests.test('Metarequire nestsed commonjs modules', async (test) => {
+metatests.test('Access nestsed commonjs', async (test) => {
   const sandbox = {};
   sandbox.global = sandbox;
   const src = `module.exports = require('./examples/nestedmodule1.js');`;
@@ -282,7 +317,38 @@ metatests.test('Metarequire nestsed commonjs modules', async (test) => {
   test.end();
 });
 
-metatests.test('Metarequire nestsed not permitted', async (test) => {
+metatests.test('Access folder (path prefix)', async (test) => {
+  const sandbox = {};
+  sandbox.global = sandbox;
+  const src = `module.exports = require('./examples/nestedmodule1.js');`;
+  const ms = metavm.createScript('Example', src, {
+    context: metavm.createContext(sandbox),
+    dirname: __dirname,
+    access: {
+      './examples': true,
+    },
+    type: metavm.MODULE_TYPE.COMMONJS,
+  });
+  test.strictSame(ms.exports.value, 1);
+  test.strictSame(ms.exports.nested.value, 2);
+  test.end();
+});
+
+metatests.test('Access with readScript', async (test) => {
+  const filePath = path.join(examples, 'nestedmodule1.js');
+  const ms = await metavm.readScript(filePath, {
+    dirname: examples,
+    access: {
+      './nestedmodule2.js': true,
+    },
+    type: metavm.MODULE_TYPE.COMMONJS,
+  });
+  test.strictSame(ms.exports.value, 1);
+  test.strictSame(ms.exports.nested.value, 2);
+  test.end();
+});
+
+metatests.test('Access nestsed not permitted', async (test) => {
   try {
     const sandbox = {};
     sandbox.global = sandbox;
@@ -303,7 +369,7 @@ metatests.test('Metarequire nestsed not permitted', async (test) => {
   test.end();
 });
 
-metatests.test('Metarequire nestsed npm modules', async (test) => {
+metatests.test('Access nestsed npm modules', async (test) => {
   const sandbox = {};
   sandbox.global = sandbox;
   const src = `module.exports = require('inherits');`;
