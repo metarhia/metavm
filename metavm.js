@@ -5,7 +5,7 @@ const fs = require('fs');
 const fsp = fs.promises;
 const path = require('path');
 
-const RUN_OPTIONS = { timeout: 5000, displayErrors: false };
+const RUN_OPTIONS = { timeout: 1000, displayErrors: false };
 const CONTEXT_OPTIONS = { microtaskMode: 'afterEvaluate' };
 const USE_STRICT = `'use strict';\n`;
 const CURDIR = '.' + path.sep;
