@@ -24,7 +24,7 @@
     "metavm.d.ts"
   ],
   "engines": {
-    "node": "^12.9 || 14 || 16 || 17"
+    "node": "^14.6 || 16 || 17 || 18"
   },
   "repository": {
     "type": "git",
@@ -43,7 +43,7 @@
     "lint": "eslint . && prettier -c \"**/*.js\" \"**/*.json\" \"**/*.md\" \"**/.*rc\" \"**/*.ts\"",
     "types": "tsc -p tsconfig.json",
     "fmt": "prettier --write \"**/*.js\" \"**/*.json\" \"**/*.md\" \"**/.*rc\" \"**/*.ts\"",
-    "test": "npm run lint && npm run types && metatests test/unit.js"
+    "test": "npm run lint && npm run types && metatests test/unit.js && metatests test/timeout.js"
   },
   "devDependencies": {
     "@types/node": "^17.0.25",

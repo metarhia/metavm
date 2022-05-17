@@ -147,13 +147,12 @@ metatests.test('File is not found', async (test) => {
 
 metatests.test('Syntax error', async (test) => {
   const filePath = path.join(examples, 'syntax.error');
-  let ms;
   try {
-    ms = await metavm.readScript(filePath);
+    await metavm.readScript(filePath);
+    test.fail();
   } catch (err) {
     test.strictSame(err.constructor.name, 'SyntaxError');
   }
-  test.strictSame(ms, undefined);
   test.end();
 });
 
@@ -184,14 +183,12 @@ metatests.test('Create custom context', async (test) => {
 
 metatests.test('Call undefined as a function', async (test) => {
   const filePath = path.join(examples, 'undef.js');
-  const ms = await metavm.readScript(filePath);
-
-  let result;
   try {
-    result = await ms.exports();
+    const ms = await metavm.readScript(filePath, { microtaskMode: 'none' });
+    await ms.exports();
+    test.fail();
   } catch (err) {
     test.strictSame(err.constructor.name, 'TypeError');
-    test.strictSame(result, undefined);
   }
   test.end();
 });
@@ -356,5 +353,29 @@ metatests.test('Access nestsed npm modules', async (test) => {
     type: metavm.MODULE_TYPE.COMMONJS,
   });
   test.strictSame(typeof ms.exports, 'function');
+  test.end();
+});
+
+metatests.test('Prevent eval for common.js modules', async (test) => {
+  const src = `module.exports = eval('100 * 2');`;
+  try {
+    metavm.createScript('Example', src, {
+      type: metavm.MODULE_TYPE.COMMONJS,
+    });
+    test.fail();
+  } catch (error) {
+    test.strictSame(error.constructor.name, 'EvalError');
+  }
+  test.end();
+});
+
+metatests.test('Erevent eval for Metarhia modules', async (test) => {
+  const src = `eval('100 * 2')`;
+  try {
+    metavm.createScript('Example', src);
+    test.fail();
+  } catch (error) {
+    test.strictSame(error.constructor.name, 'EvalError');
+  }
   test.end();
 });
