@@ -5,19 +5,26 @@ const fs = require('fs');
 const fsp = fs.promises;
 const path = require('path');
 
-const RUN_OPTIONS = { timeout: 5000, displayErrors: false };
-const CONTEXT_OPTIONS = { microtaskMode: 'afterEvaluate' };
 const USE_STRICT = `'use strict';\n`;
 const CURDIR = '.' + path.sep;
 const SRC_BEFORE = '((exports, require, module, __filename, __dirname) => { ';
 const SRC_AFTER = '\n});';
+
+const RUN_OPTIONS = { timeout: 1000 };
+
+const CONTEXT_OPTIONS = {
+  codeGeneration: {
+    strings: false,
+    wasm: false,
+  },
+};
 
 const MODULE_TYPE = {
   METARHIA: 1,
   COMMONJS: 2,
 };
 
-const EMPTY_CONTEXT = vm.createContext(Object.freeze({}));
+const EMPTY_CONTEXT = vm.createContext(Object.freeze({}), CONTEXT_OPTIONS);
 
 const COMMON_CONTEXT = vm.createContext(
   Object.freeze({
@@ -41,7 +48,8 @@ class MetavmError extends Error {}
 
 const createContext = (context, preventEscape = false) => {
   if (context === undefined) return EMPTY_CONTEXT;
-  return vm.createContext(context, preventEscape ? CONTEXT_OPTIONS : {});
+  const options = preventEscape ? { microtaskMode: 'afterEvaluate' } : {};
+  return vm.createContext(context, { ...CONTEXT_OPTIONS, ...options });
 };
 
 const wrapSource = (src) => SRC_BEFORE + src + SRC_AFTER;
@@ -69,7 +77,8 @@ class MetaScript {
     const scriptOptions = { filename: name, ...options, lineOffset };
     this.script = new vm.Script(strict + code, scriptOptions);
     this.context = options.context || createContext();
-    const exports = this.script.runInContext(this.context, RUN_OPTIONS);
+    const runOptions = { ...RUN_OPTIONS, ...options };
+    const exports = this.script.runInContext(this.context, runOptions);
     this.exports = common ? this.commonExports(exports) : exports;
   }
 
