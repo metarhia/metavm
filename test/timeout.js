@@ -19,8 +19,8 @@ const TIMEOUT = 1000;
     assert.fail(`${name}: failed`);
   } catch (error) {
     assert(error.message.includes('timed out'));
+    console.log(`${name}: passed`);
   }
-  console.log(`${name}: passed`);
 }
 
 {
@@ -37,8 +37,8 @@ const TIMEOUT = 1000;
     assert.fail(`${name}: failed`);
   } catch (error) {
     assert(error.message.includes('timed out'));
+    console.log(`${name}: passed`);
   }
-  console.log(`${name}: passed`);
 }
 
 {
@@ -49,11 +49,12 @@ const TIMEOUT = 1000;
     })
   });`;
   try {
-    const context = metavm.createContext({}, true);
+    //const context = metavm.createContext({}, true);
+    const context = vm.createContext({}, { microtaskMode: 'afterEvaluate' });
     metavm.createScript('Example', src, { context });
     assert.fail(`${name}: failed`);
   } catch (error) {
     assert(error.message.includes('timed out'));
+    console.log(`${name}: passed`);
   }
-  console.log(`${name}: passed`);
 }
