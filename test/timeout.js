@@ -2,7 +2,7 @@
 
 const metavm = require('..');
 const vm = require('vm');
-const assert = require('assert/strict');
+const assert = require('assert');
 
 const TIMEOUT = 1000;
 
