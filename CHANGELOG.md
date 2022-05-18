@@ -2,6 +2,8 @@
 
 ## [Unreleased][unreleased]
 
+## [1.2.0][] - 2022-05-18
+
 - Implement metarequire and require nesting
 - Support permissions for node.js modules including internal and npm modules
 - Update dependencies and apply security fixes
@@ -49,7 +51,8 @@ First metavm implementation with following features
 - Contexts, use default empty and frozen, emulated or pass one
 - Use `microtaskMode` https://github.com/nodejs/node/pull/34023
 
-[unreleased]: https://github.com/metarhia/metavm/compare/v1.1.0...HEAD
+[unreleased]: https://github.com/metarhia/metavm/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/metarhia/metavm/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/metarhia/metavm/compare/v1.0.3...v1.1.0
 [1.0.3]: https://github.com/metarhia/metavm/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/metarhia/metavm/compare/v1.0.1...v1.0.2
