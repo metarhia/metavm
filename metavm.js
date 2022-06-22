@@ -41,7 +41,7 @@ const COMMON_CONTEXT = vm.createContext(
     clearTimeout,
     clearImmediate,
     clearInterval,
-  })
+  }),
 );
 
 class MetavmError extends Error {}
