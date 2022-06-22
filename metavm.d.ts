@@ -7,7 +7,7 @@ export class MetavmError extends Error {}
 
 export function createContext(
   context?: Context,
-  preventEscape?: boolean
+  preventEscape?: boolean,
 ): Context;
 
 declare enum ModuleType {
@@ -34,10 +34,10 @@ export class MetaScript {
 export function createScript(
   name: string,
   src: string,
-  options?: MetaScriptOptions
+  options?: MetaScriptOptions,
 ): MetaScript;
 
 export function readScript(
   filePath: string,
-  options?: BaseOptions
+  options?: BaseOptions,
 ): Promise<MetaScript>;

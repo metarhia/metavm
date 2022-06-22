@@ -103,7 +103,7 @@ metatests.test('Load function', async (test) => {
   test.strictSame(fields, SCRIPT_FIELDS);
 
   test.strictSame(ms.exports(2, 3), 6);
-  test.strictSame(ms.exports.bind(this, 3)(4), 12);
+  test.strictSame(ms.exports.bind(null, 3)(4), 12);
   test.end();
 });
 

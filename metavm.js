@@ -41,7 +41,7 @@ const COMMON_CONTEXT = vm.createContext(
     clearTimeout,
     clearImmediate,
     clearInterval,
-  })
+  }),
 );
 
 class MetavmError extends Error {}
@@ -100,6 +100,7 @@ class MetaScript {
         return Reflect.get(this.access, key);
       }
     }
+    return null;
   }
 
   createRequire() {
