@@ -2,6 +2,8 @@
 
 ## [Unreleased][unreleased]
 
+- Support local identifiers
+
 ## [1.2.0][] - 2022-05-18
 
 - Implement metarequire and require nesting

@@ -72,7 +72,7 @@ class MetaScript {
     this.access = options.access || {};
     const common = this.type === MODULE_TYPE.COMMONJS;
     const strict = useStrict(src);
-    const code = common ? wrapSource(src) : src;
+    const code = common ? wrapSource(src) : `{\n${src}\n}`;
     const lineOffset = strict === '' ? 0 : -1;
     const scriptOptions = { filename: name, ...options, lineOffset };
     this.script = new vm.Script(strict + code, scriptOptions);
