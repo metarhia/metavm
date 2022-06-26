@@ -100,6 +100,7 @@ class MetaScript {
         return Reflect.get(this.access, key);
       }
     }
+    return null;
   }
 
   createRequire() {
