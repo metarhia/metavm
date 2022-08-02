@@ -2,6 +2,8 @@
 
 ## [Unreleased][unreleased]
 
+- Using optional chaining operator
+
 ## [1.2.1][] - 2022-07-07
 
 - Support local identifiers
