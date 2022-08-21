@@ -2,6 +2,7 @@
 
 ## [Unreleased][unreleased]
 
+- Add browser polyfill
 - Using optional chaining operator
 
 ## [1.2.1][] - 2022-07-07
