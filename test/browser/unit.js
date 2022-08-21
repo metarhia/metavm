@@ -74,7 +74,8 @@ metatests.test('run script not in worker', async (test) => {
     const metavm = await import('/metavm.mjs');
 
     const script = metavm.createScript('name', '() => A1 + A2', {
-      context: { A1: 50, A2: 30 }, inWorker: false,
+      context: { A1: 50, A2: 30 },
+      inWorker: false,
     });
     const result = await script.exports;
     return result;
@@ -88,4 +89,3 @@ metatests.test('run script not in worker', async (test) => {
   server.close();
   test.end();
 });
-

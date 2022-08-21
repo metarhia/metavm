@@ -24,7 +24,6 @@ const createServer = (PORT) =>
     })
     .listen(PORT);
 
-
 const checkServerStart = (port) =>
   new Promise((resolve, reject) => {
     http.get(`http://localhost:${port}/`, { timeout: 1000 }, (resp) => {
