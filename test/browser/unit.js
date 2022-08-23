@@ -5,7 +5,9 @@ const metatests = require('metatests');
 const { remote } = require('webdriverio');
 const { createServer, checkServerStart } = require('./staticServer.js');
 
-const server = createServer(3000);
+const { PORT } = process.env;
+
+const server = createServer(PORT);
 
 metatests.test('run basic script', async (test) => {
   const browser = await remote({
@@ -13,9 +15,9 @@ metatests.test('run basic script', async (test) => {
     logLevel: 'error',
   });
 
-  await checkServerStart(3000);
+  await serverReady();
 
-  await browser.url('http://localhost:3000/');
+  await browser.url(`http://localhost:${PORT}/`);
 
   const result = await browser.execute(async () => {
     const metavm = await import('/metavm.mjs');
