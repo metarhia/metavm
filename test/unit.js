@@ -1,8 +1,8 @@
 'use strict';
 
-const metavm = require('..');
-const path = require('path');
+const path = require('node:path');
 const metatests = require('metatests');
+const metavm = require('..');
 
 const examples = path.join(__dirname, 'examples');
 

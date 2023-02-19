@@ -1,9 +1,9 @@
 'use strict';
 
-const vm = require('vm');
-const fs = require('fs');
+const vm = require('node:vm');
+const fs = require('node:fs');
 const fsp = fs.promises;
-const path = require('path');
+const path = require('node:path');
 
 const USE_STRICT = `'use strict';\n`;
 const CURDIR = '.' + path.sep;

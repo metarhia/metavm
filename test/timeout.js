@@ -1,8 +1,8 @@
 'use strict';
 
+const vm = require('node:vm');
+const assert = require('node:assert');
 const metavm = require('..');
-const vm = require('vm');
-const assert = require('assert');
 
 const TIMEOUT = 1000;
 
