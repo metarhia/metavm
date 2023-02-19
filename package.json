@@ -1,6 +1,6 @@
 {
   "name": "metavm",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "author": "Timur Shemsedinov <timur.shemsedinov@gmail.com>",
   "license": "MIT",
   "description": "Metarhia script loader, node.js vm wrapper",
@@ -21,7 +21,7 @@
   },
   "files": ["dist/", "metavm.d.ts"],
   "engines": {
-    "node": "^14.6 || 16 || 18 || 19"
+    "node": "^14.18 || 16 || 18 || 19"
   },
   "repository": {
     "type": "git",
