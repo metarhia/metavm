@@ -2,6 +2,8 @@
 
 ## [Unreleased][unreleased]
 
+- Add `node:` prefix in require for built-in modules
+
 ## [1.2.2][] - 2022-11-16
 
 - Using optional chaining operator
