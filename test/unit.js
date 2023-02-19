@@ -137,12 +137,9 @@ metatests.test('Use local identifier', async (test) => {
   const context = metavm.createContext({});
   const filePath = path.join(examples, 'local.js');
   const ms1 = await metavm.readScript(filePath, { context });
-  const ms2 = await metavm.readScript(filePath, { context });
-  console.log({ ms1, ms2 });
 
   const expected = { args: ['str'], local: 'hello' };
   const result = await ms1.exports('str');
-  console.log({ result });
   test.strictSame(result, expected);
 
   test.end();

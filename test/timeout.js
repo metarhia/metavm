@@ -49,7 +49,6 @@ const TIMEOUT = 1000;
     })
   });`;
   try {
-    //const context = metavm.createContext({}, true);
     const context = vm.createContext({}, { microtaskMode: 'afterEvaluate' });
     metavm.createScript('Example', src, { context });
     assert.fail(`${name}: failed`);
