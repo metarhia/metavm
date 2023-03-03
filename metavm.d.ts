@@ -1,4 +1,4 @@
-import { Context, Script, ScriptOptions, BaseOptions } from 'vm';
+import { Context, Script, ScriptOptions, BaseOptions } from 'node:vm';
 
 export const EMPTY_CONTEXT: Context;
 export const COMMON_CONTEXT: Context;
