@@ -2,6 +2,8 @@
 
 ## [Unreleased][unreleased]
 
+## [1.2.4][] - 2023-03-10
+
 - Fix 1 line shift in stack traces
 
 ## [1.2.3][] - 2023-02-19
