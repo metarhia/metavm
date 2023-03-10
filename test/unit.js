@@ -168,6 +168,46 @@ metatests.test('Syntax error', async (test) => {
   test.end();
 });
 
+metatests.test('Reference error', async (test) => {
+  const filePath = path.join(examples, 'referenceError.js');
+  try {
+    const script = await metavm.readScript(filePath);
+    await script.exports();
+    test.fail();
+  } catch (err) {
+    test.strictSame(err.constructor.name, 'ReferenceError');
+  }
+  test.end();
+});
+
+metatests.test('Line number', async (test) => {
+  {
+    const filePath = path.join(examples, 'referenceError.js');
+    try {
+      const script = await metavm.readScript(filePath);
+      await script.exports();
+      test.fail();
+    } catch (err) {
+      const [, firstLine] = err.stack.split('\n');
+      const [, lineNumber] = firstLine.split(':');
+      test.strictSame(parseInt(lineNumber, 10), 2);
+    }
+  }
+  {
+    const filePath = path.join(examples, 'useStrict.cjs');
+    try {
+      const script = await metavm.readScript(filePath);
+      await script.exports();
+      test.fail();
+    } catch (err) {
+      const [, firstLine] = err.stack.split('\n');
+      const [, lineNumber] = firstLine.split(':');
+      test.strictSame(parseInt(lineNumber, 10), 4);
+    }
+  }
+  test.end();
+});
+
 metatests.test('Create default context', async (test) => {
   const context = metavm.createContext();
   test.strictSame(Object.keys(context), []);
