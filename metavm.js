@@ -5,10 +5,7 @@ const fs = require('node:fs');
 const fsp = fs.promises;
 const path = require('node:path');
 
-const USE_STRICT = `'use strict';\n`;
 const CURDIR = '.' + path.sep;
-const SRC_BEFORE = '((exports, require, module, __filename, __dirname) => { ';
-const SRC_AFTER = '\n});';
 
 const RUN_OPTIONS = { timeout: 1000 };
 
@@ -52,8 +49,11 @@ const createContext = (context, preventEscape = false) => {
   return vm.createContext(context, { ...CONTEXT_OPTIONS, ...options });
 };
 
+const SRC_BEFORE = '((exports, require, module, __filename, __dirname) => { ';
+const SRC_AFTER = '\n});';
 const wrapSource = (src) => SRC_BEFORE + src + SRC_AFTER;
 
+const USE_STRICT = `'use strict';\n`;
 const useStrict = (src) => (src.startsWith(USE_STRICT) ? '' : USE_STRICT);
 
 const addExt = (name) => {
