@@ -1,6 +1,6 @@
 {
   "name": "metavm",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "author": "Timur Shemsedinov <timur.shemsedinov@gmail.com>",
   "license": "MIT",
   "description": "Metarhia script loader, node.js vm wrapper",
@@ -43,10 +43,10 @@
     "test": "npm run lint && npm run types && metatests test/unit.js && metatests test/timeout.js"
   },
   "devDependencies": {
-    "@types/node": "^18.14.0",
-    "eslint": "^8.34.0",
+    "@types/node": "^18.15.0",
+    "eslint": "^8.35.0",
     "eslint-config-metarhia": "^8.1.0",
-    "eslint-config-prettier": "^8.6.0",
+    "eslint-config-prettier": "^8.7.0",
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-prettier": "^4.2.1",
     "metatests": "^0.8.2",
