@@ -2,6 +2,8 @@
 
 ## [Unreleased][unreleased]
 
+- Fix 1 line shift in stack traces
+
 ## [1.2.3][] - 2023-02-19
 
 - Add `node:` prefix in require for built-in modules
