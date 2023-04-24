@@ -21,7 +21,7 @@
   },
   "files": ["dist/", "metavm.d.ts"],
   "engines": {
-    "node": "^14.18 || 16 || 18 || 19"
+    "node": "16 || 18 || 19 || 20"
   },
   "repository": {
     "type": "git",
