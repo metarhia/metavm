@@ -2,6 +2,12 @@
 
 ## [Unreleased][unreleased]
 
+## [1.2.5][] - 2023-04-29
+
+- Drop node.js 14 support, add node.js 20
+- Convert package_lock.json to lockfileVersion 2
+- Update dependencies
+
 ## [1.2.4][] - 2023-03-10
 
 - Fix 1 line shift in stack traces
@@ -68,7 +74,8 @@ First metavm implementation with following features
 - Contexts, use default empty and frozen, emulated or pass one
 - Use `microtaskMode` https://github.com/nodejs/node/pull/34023
 
-[unreleased]: https://github.com/metarhia/metavm/compare/v1.2.4...HEAD
+[unreleased]: https://github.com/metarhia/metavm/compare/v1.2.5...HEAD
+[1.2.5]: https://github.com/metarhia/metavm/compare/v1.2.4...v1.2.5
 [1.2.4]: https://github.com/metarhia/metavm/compare/v1.2.3...v1.2.4
 [1.2.3]: https://github.com/metarhia/metavm/compare/v1.2.2...v1.2.3
 [1.2.2]: https://github.com/metarhia/metavm/compare/v1.2.1...v1.2.2
