@@ -18,14 +18,17 @@ const metavm = require('metavm');
 const src = `({ field: 'value' });`;
 const ms = metavm.createScript('Example', src);
 console.log(ms);
+```
 
-// Output:
-//   MetaScript {
-//     name: 'Example',
-//     script: Script {},
-//     context: {},
-//     exports: { field: 'value' }
-//   }
+Output:
+
+```js
+MetaScript {
+  name: 'Example',
+  script: Script {},
+  context: {},
+  exports: { field: 'value' }
+}
 ```
 
 Script contains function expression. You can use it for api endpoints, domain
@@ -37,14 +40,17 @@ const metavm = require('metavm');
 const src = `(a, b) => a + b;`;
 const ms = metavm.createScript('Example', src);
 console.log(ms);
+```
 
-// Output:
-//   MetaScript {
-//     name: 'Example',
-//     script: Script {},
-//     context: {},
-//     exports: [Function]
-//   }
+Output:
+
+```js
+MetaScript {
+  name: 'Example',
+  script: Script {},
+  context: {},
+  exports: [Function]
+}
 ```
 
 ## Read script from file
@@ -56,18 +62,21 @@ const metavm = require('.');
   const ms = await metavm.readScript('./test/examples/simple.js');
   console.log(ms);
 })();
+```
 
-// Output:
-//   MetaScript {
-//     name: 'simple',
-//     script: Script {},
-//     context: {},
-//     exports: { field: 'value', add: [Function: add], sub: [Function: sub] }
-//   }
+Output:
+
+```
+MetaScript {
+  name: 'simple',
+  script: Script {},
+  context: {},
+  exports: { field: 'value', add: [Function: add], sub: [Function: sub] }
+}
 ```
 
 ## License & Contributors
 
-Copyright (c) 2020-2022 [Metarhia contributors](https://github.com/metarhia/metavm/graphs/contributors).
+Copyright (c) 2020-2023 [Metarhia contributors](https://github.com/metarhia/metavm/graphs/contributors).
 Metavm is [MIT licensed](./LICENSE).\
 Metavm is a part of [Metarhia](https://github.com/metarhia) technology stack.
