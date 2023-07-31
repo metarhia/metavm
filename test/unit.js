@@ -218,8 +218,9 @@ metatests.test('Create default context', async (test) => {
 metatests.test('Create common context', async (test) => {
   const context = metavm.createContext(metavm.COMMON_CONTEXT);
   test.strictSame(typeof context, 'object');
-  test.strictSame(context.console, console);
   test.strictSame(context.global, undefined);
+  test.strictSame(context.console, undefined);
+  test.strictSame(context.process, undefined);
   test.strictSame(context.AbortController, AbortController);
   test.strictSame(context.Buffer, Buffer);
   test.strictSame(context.Event, Event);
@@ -238,6 +239,15 @@ metatests.test('Create common context', async (test) => {
   test.strictSame(context.clearTimeout, clearTimeout);
   test.strictSame(context.clearImmediate, clearImmediate);
   test.strictSame(context.clearInterval, clearInterval);
+  test.end();
+});
+
+metatests.test('Create nodejs context', async (test) => {
+  const context = metavm.createContext(metavm.NODE_CONTEXT);
+  test.strictSame(typeof context, 'object');
+  test.strictSame(context.global, global);
+  test.strictSame(context.console, console);
+  test.strictSame(context.process, process);
   test.end();
 });
 

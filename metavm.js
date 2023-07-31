@@ -21,31 +21,32 @@ const MODULE_TYPE = {
   COMMONJS: 2,
 };
 
-const EMPTY_CONTEXT = vm.createContext(Object.freeze({}), CONTEXT_OPTIONS);
+const DEFAULT = {
+  AbortController,
+  Event,
+  EventTarget,
+  MessageChannel,
+  MessageEvent,
+  MessagePort,
+  Buffer,
+  URL,
+  URLSearchParams,
+  TextDecoder,
+  TextEncoder,
+  queueMicrotask,
+  setTimeout,
+  setImmediate,
+  setInterval,
+  clearTimeout,
+  clearImmediate,
+  clearInterval,
+};
 
-const COMMON_CONTEXT = vm.createContext(
-  Object.freeze({
-    AbortController,
-    Event,
-    EventTarget,
-    MessageChannel,
-    MessageEvent,
-    MessagePort,
-    Buffer,
-    URL,
-    URLSearchParams,
-    TextDecoder,
-    TextEncoder,
-    console,
-    queueMicrotask,
-    setTimeout,
-    setImmediate,
-    setInterval,
-    clearTimeout,
-    clearImmediate,
-    clearInterval,
-  }),
-);
+const NODE = { global, console, process };
+
+const EMPTY_CONTEXT = vm.createContext(Object.freeze({}), CONTEXT_OPTIONS);
+const COMMON_CONTEXT = vm.createContext(Object.freeze({ ...DEFAULT }));
+const NODE_CONTEXT = vm.createContext(Object.freeze({ ...DEFAULT, ...NODE }));
 
 class MetavmError extends Error {}
 
@@ -163,6 +164,7 @@ module.exports = {
   createScript,
   EMPTY_CONTEXT,
   COMMON_CONTEXT,
+  NODE_CONTEXT,
   MODULE_TYPE,
   readScript,
 };
