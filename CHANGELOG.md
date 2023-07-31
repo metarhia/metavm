@@ -2,6 +2,13 @@
 
 ## [Unreleased][unreleased]
 
+## [1.2.6][] - 2023-07-31
+
+- Classes added to COMMON_CONTEXT: AbortController, Event, EventTarget,
+  MessageChannel, MessageEvent, MessagePort
+- Added NODE_CONTEXT with: global, console, process and everything from
+  COMMON_CONTEXT
+
 ## [1.2.5][] - 2023-04-29
 
 - Drop node.js 14 support, add node.js 20
@@ -74,7 +81,8 @@ First metavm implementation with following features
 - Contexts, use default empty and frozen, emulated or pass one
 - Use `microtaskMode` https://github.com/nodejs/node/pull/34023
 
-[unreleased]: https://github.com/metarhia/metavm/compare/v1.2.5...HEAD
+[unreleased]: https://github.com/metarhia/metavm/compare/v1.2.6...HEAD
+[1.2.6]: https://github.com/metarhia/metavm/compare/v1.2.5...v1.2.6
 [1.2.5]: https://github.com/metarhia/metavm/compare/v1.2.4...v1.2.5
 [1.2.4]: https://github.com/metarhia/metavm/compare/v1.2.3...v1.2.4
 [1.2.3]: https://github.com/metarhia/metavm/compare/v1.2.2...v1.2.3

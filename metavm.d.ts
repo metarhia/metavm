@@ -2,6 +2,7 @@ import { Context, Script, ScriptOptions, BaseOptions } from 'node:vm';
 
 export const EMPTY_CONTEXT: Context;
 export const COMMON_CONTEXT: Context;
+export const NODE_CONTEXT: Context;
 
 export class MetavmError extends Error {}
 
