@@ -220,6 +220,24 @@ metatests.test('Create common context', async (test) => {
   test.strictSame(typeof context, 'object');
   test.strictSame(context.console, console);
   test.strictSame(context.global, undefined);
+  test.strictSame(context.AbortController, AbortController);
+  test.strictSame(context.Buffer, Buffer);
+  test.strictSame(context.Event, Event);
+  test.strictSame(context.EventTarget, EventTarget);
+  test.strictSame(context.MessageChannel, MessageChannel);
+  test.strictSame(context.MessageEvent, MessageEvent);
+  test.strictSame(context.MessagePort, MessagePort);
+  test.strictSame(context.URL, URL);
+  test.strictSame(context.URLSearchParams, URLSearchParams);
+  test.strictSame(context.TextDecoder, TextDecoder);
+  test.strictSame(context.TextEncoder, TextEncoder);
+  test.strictSame(context.queueMicrotask, queueMicrotask);
+  test.strictSame(context.setTimeout, setTimeout);
+  test.strictSame(context.setImmediate, setImmediate);
+  test.strictSame(context.setInterval, setInterval);
+  test.strictSame(context.clearTimeout, clearTimeout);
+  test.strictSame(context.clearImmediate, clearImmediate);
+  test.strictSame(context.clearInterval, clearInterval);
   test.end();
 });
 

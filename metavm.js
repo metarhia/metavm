@@ -25,6 +25,12 @@ const EMPTY_CONTEXT = vm.createContext(Object.freeze({}), CONTEXT_OPTIONS);
 
 const COMMON_CONTEXT = vm.createContext(
   Object.freeze({
+    AbortController,
+    Event,
+    EventTarget,
+    MessageChannel,
+    MessageEvent,
+    MessagePort,
     Buffer,
     URL,
     URLSearchParams,
