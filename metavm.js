@@ -23,16 +23,26 @@ const MODULE_TYPE = {
 
 const DEFAULT = {
   AbortController,
+  AbortSignal,
   Event,
   EventTarget,
   MessageChannel,
   MessageEvent,
   MessagePort,
   Buffer,
+  Blob,
+  FormData,
+  Headers,
+  Response,
+  Request,
+  ByteLengthQueuingStrategy,
   URL,
   URLSearchParams,
   TextDecoder,
   TextEncoder,
+  TextDecoderStream,
+  TextEncoderStream,
+  WebAssembly,
   queueMicrotask,
   setTimeout,
   setImmediate,
@@ -40,6 +50,10 @@ const DEFAULT = {
   clearTimeout,
   clearImmediate,
   clearInterval,
+  BroadcastChannel,
+  CompressionStream,
+  DecompressionStream,
+  CountQueuingStrategy,
 };
 
 const NODE = { global, console, process };
