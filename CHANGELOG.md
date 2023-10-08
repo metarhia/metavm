@@ -2,6 +2,11 @@
 
 ## [Unreleased][unreleased]
 
+## [1.3.0][] - 2023-10-09
+
+- Support new globals for node.js 18 and 20
+- Drop node.js 16 and 19
+
 ## [1.2.6][] - 2023-07-31
 
 - Classes added to COMMON_CONTEXT: AbortController, Event, EventTarget,
@@ -81,7 +86,8 @@ First metavm implementation with following features
 - Contexts, use default empty and frozen, emulated or pass one
 - Use `microtaskMode` https://github.com/nodejs/node/pull/34023
 
-[unreleased]: https://github.com/metarhia/metavm/compare/v1.2.6...HEAD
+[unreleased]: https://github.com/metarhia/metavm/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/metarhia/metavm/compare/v1.2.6...v1.3.0
 [1.2.6]: https://github.com/metarhia/metavm/compare/v1.2.5...v1.2.6
 [1.2.5]: https://github.com/metarhia/metavm/compare/v1.2.4...v1.2.5
 [1.2.4]: https://github.com/metarhia/metavm/compare/v1.2.3...v1.2.4
