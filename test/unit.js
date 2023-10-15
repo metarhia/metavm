@@ -169,7 +169,7 @@ test('Reference error', async () => {
   }
 });
 
-test('Line number', async () => {
+test('Line number and position', async () => {
   {
     const filePath = path.join(examples, 'referenceError.js');
     try {
@@ -178,8 +178,9 @@ test('Line number', async () => {
       test.fail();
     } catch (err) {
       const [, firstLine] = err.stack.split('\n');
-      const [, lineNumber] = firstLine.split(':');
+      const [, lineNumber, position] = firstLine.split(':');
       assert.strictEqual(parseInt(lineNumber, 10), 2);
+      assert.strictEqual(parseInt(position, 10), 18);
     }
   }
   {
@@ -190,8 +191,22 @@ test('Line number', async () => {
       test.fail();
     } catch (err) {
       const [, firstLine] = err.stack.split('\n');
-      const [, lineNumber] = firstLine.split(':');
+      const [, lineNumber, position] = firstLine.split(':');
       assert.strictEqual(parseInt(lineNumber, 10), 4);
+      assert.strictEqual(parseInt(position, 10), 18);
+    }
+  }
+  {
+    const filePath = path.join(examples, 'simpleUndef.js');
+    try {
+      const script = await metavm.readScript(filePath);
+      script.exports.add(5, 2);
+      test.fail();
+    } catch (err) {
+      const [, firstLine] = err.stack.split('\n');
+      const [, lineNumber, position] = firstLine.split(':');
+      assert.strictEqual(parseInt(lineNumber, 10), 5);
+      assert.strictEqual(parseInt(position, 10), 14);
     }
   }
 });
