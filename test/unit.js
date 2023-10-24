@@ -455,3 +455,21 @@ test('Check native fetch', async () => {
   assert.ok(proto);
   assert.strictEqual(proto.constructor.name, 'AsyncFunction');
 });
+
+test('ECMAScript modules', async () => {
+  const sandbox = {};
+  sandbox.global = sandbox;
+  const src = `const fn = x => x;
+export { fn };
+`;
+  try {
+    const ms = metavm.createScript('Example', src, {
+      context: metavm.createContext(sandbox),
+      dirname: __dirname,
+      type: metavm.MODULE_TYPE.ECMA,
+    });
+    test.fail(ms);
+  } catch (err) {
+    assert.ok(err);
+  }
+});
