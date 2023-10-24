@@ -54,6 +54,7 @@ const DEFAULT = {
   CompressionStream,
   DecompressionStream,
   CountQueuingStrategy,
+  fetch,
 };
 
 const NODE = { global, console, process };

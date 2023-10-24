@@ -241,6 +241,7 @@ test('Create common context', async () => {
   assert.strictEqual(context.clearTimeout, clearTimeout);
   assert.strictEqual(context.clearImmediate, clearImmediate);
   assert.strictEqual(context.clearInterval, clearInterval);
+  assert.strictEqual(context.fetch, fetch);
 });
 
 test('Create nodejs context', async () => {
@@ -444,4 +445,13 @@ test('Erevent eval for Metarhia modules', async () => {
   } catch (error) {
     assert.strictEqual(error.constructor.name, 'EvalError');
   }
+});
+
+test('Check native fetch', async () => {
+  const src = `fetch`;
+  const context = metavm.createContext(metavm.COMMON_CONTEXT);
+  const ms = metavm.createScript('Example', src, { context });
+  const proto = Object.getPrototypeOf(ms.exports);
+  assert.ok(proto);
+  assert.strictEqual(proto.constructor.name, 'AsyncFunction');
 });
