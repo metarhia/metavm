@@ -19,6 +19,7 @@ const CONTEXT_OPTIONS = {
 const MODULE_TYPE = {
   METARHIA: 1,
   COMMONJS: 2,
+  ECMA: 3,
 };
 
 const DEFAULT = {
@@ -87,6 +88,9 @@ const internalRequire = require;
 
 class MetaScript {
   constructor(name, src, options = {}) {
+    if (options.type === MODULE_TYPE.ECMA) {
+      throw new Error('ECMAScript modules is not supported');
+    }
     this.name = name;
     this.dirname = options.dirname || process.cwd();
     this.relative = options.relative || '.';
