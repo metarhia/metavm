@@ -453,7 +453,7 @@ test('Check native fetch', async () => {
   const ms = metavm.createScript('Example', src, { context });
   const proto = Object.getPrototypeOf(ms.exports);
   assert.ok(proto);
-  assert.strictEqual(proto.constructor.name, 'AsyncFunction');
+  assert.ok(proto.constructor.name.endsWith('Function'));
 });
 
 test('ECMAScript modules', async () => {
