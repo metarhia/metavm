@@ -2,6 +2,12 @@
 
 ## [Unreleased][unreleased]
 
+## [1.4.0][] - 2023-10-25
+
+- Add fetch to default global
+- Move to native node.js test runner
+- Support node.js 21
+
 ## [1.3.0][] - 2023-10-09
 
 - Support new globals for node.js 18 and 20
@@ -86,7 +92,8 @@ First metavm implementation with following features
 - Contexts, use default empty and frozen, emulated or pass one
 - Use `microtaskMode` https://github.com/nodejs/node/pull/34023
 
-[unreleased]: https://github.com/metarhia/metavm/compare/v1.3.0...HEAD
+[unreleased]: https://github.com/metarhia/metavm/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/metarhia/metavm/compare/v1.3.0...v1.4.0
 [1.3.0]: https://github.com/metarhia/metavm/compare/v1.2.6...v1.3.0
 [1.2.6]: https://github.com/metarhia/metavm/compare/v1.2.5...v1.2.6
 [1.2.5]: https://github.com/metarhia/metavm/compare/v1.2.4...v1.2.5
