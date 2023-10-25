@@ -6,6 +6,7 @@
 
 - Add fetch to default global
 - Move to native node.js test runner
+- Support node.js 21
 
 ## [1.3.0][] - 2023-10-09
 
