@@ -20,7 +20,10 @@
   "browser": {
     "./metavm.js": "./dist/metavm.js"
   },
-  "files": ["dist/", "metavm.d.ts"],
+  "files": [
+    "dist/",
+    "metavm.d.ts"
+  ],
   "engines": {
     "node": "18 || 20 || 21"
   },
