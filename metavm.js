@@ -4,6 +4,7 @@ const vm = require('node:vm');
 const fs = require('node:fs');
 const fsp = fs.promises;
 const path = require('node:path');
+const { Blob } = require('node:buffer');
 
 const CURDIR = '.' + path.sep;
 
