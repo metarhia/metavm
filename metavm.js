@@ -167,13 +167,11 @@ class MetaScript {
 
 const createScript = (name, src, options) => new MetaScript(name, src, options);
 
-const readScript = async (filePath, options) => {
+const readScript = async (filePath, options = {}) => {
   const src = await fsp.readFile(filePath, 'utf8');
   if (src === '') throw new SyntaxError(`File ${filePath} is empty`);
-  const name = options?.filename
-    ? options.filename
-    : path.basename(filePath, '.js');
-  const script = new MetaScript(name, src, options);
+  const name = options.filename ?? path.basename(filePath, '.js');
+  const script = createScript(name, src, options);
   return script;
 };
 
