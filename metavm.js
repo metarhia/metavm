@@ -175,7 +175,7 @@ const readScript = async (filePath, options = {}) => {
   return script;
 };
 
-const readScripts = async (dir, options) => {
+const readDirectory = async (dir, options) => {
   const files = await fsp.readdir(dir, { withFileTypes: true });
   const container = {};
   for (const file of files) {
@@ -183,7 +183,7 @@ const readScripts = async (dir, options) => {
     if (file.isFile() && !name.endsWith('.js')) continue;
     const location = path.join(dir, name);
     const key = path.basename(name, '.js');
-    const loader = file.isFile() ? readScript : readScripts;
+    const loader = file.isFile() ? readScript : readDirectory;
     container[key] = await loader(location, options);
   }
   return container;
@@ -198,5 +198,5 @@ module.exports = {
   NODE_CONTEXT,
   MODULE_TYPE,
   readScript,
-  readScripts,
+  readDirectory,
 };

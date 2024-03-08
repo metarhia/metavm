@@ -65,9 +65,9 @@ test('Load script', async () => {
   assert.strictEqual(ms.exports.add(2, 3), 5);
 });
 
-test('Load scripts', async () => {
+test('Load directory', async () => {
   const dir = path.join(examples, 'methods');
-  const metaScripts = await metavm.readScripts(dir);
+  const metaScripts = await metavm.readDirectory(dir);
 
   assert.strictEqual(typeof metaScripts, 'object');
   assert.ok('a-simple' in metaScripts);
