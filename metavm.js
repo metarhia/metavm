@@ -178,14 +178,19 @@ const readScript = async (filePath, options = {}) => {
 const readDirectory = async (dir, options) => {
   const files = await fsp.readdir(dir, { withFileTypes: true });
   const container = {};
+  const tasks = [];
   for (const file of files) {
     const { name } = file;
     if (file.isFile() && !name.endsWith('.js')) continue;
     const location = path.join(dir, name);
     const key = path.basename(name, '.js');
     const loader = file.isFile() ? readScript : readDirectory;
-    container[key] = await loader(location, options);
+    const task = loader(location, options).then((script) => {
+      container[key] = script;
+    });
+    tasks.push(task);
   }
+  await Promise.all(tasks);
   return container;
 };
 
