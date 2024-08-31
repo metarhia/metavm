@@ -415,14 +415,14 @@ test('Access nestsed not permitted', async () => {
 });
 
 test('Access nestsed npm modules', async () => {
-  const src = `module.exports = require('inherits');`;
+  const src = `module.exports = require('typescript');`;
   const ms = metavm.createScript('Example', src, {
     access: {
-      inherits: true,
+      typescript: true,
     },
     type: metavm.MODULE_TYPE.COMMONJS,
   });
-  assert.strictEqual(typeof ms.exports, 'function');
+  assert.strictEqual(typeof ms.exports, 'object');
 });
 
 test('Prevent eval for common.js modules', async () => {
