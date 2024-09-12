@@ -48,8 +48,8 @@
   },
   "devDependencies": {
     "@types/node": "^22.5.1",
-    "eslint": "^9.9.1",
-    "eslint-config-metarhia": "^9.0.5",
+    "eslint": "^9.10.0",
+    "eslint-config-metarhia": "^9.0.7",
     "prettier": "^3.3.3",
     "typescript": "^5.5.4"
   }
