@@ -2,6 +2,10 @@
 
 ## [Unreleased][unreleased]
 
+## [1.4.3][] - 2024-09-13
+
+- Update eslint/prettier/metarhia configs
+
 ## [1.4.2][] - 2024-08-31
 
 - Update eslint to 9.x and prettier with configs
@@ -103,7 +107,8 @@ First metavm implementation with following features
 - Contexts, use default empty and frozen, emulated or pass one
 - Use `microtaskMode` https://github.com/nodejs/node/pull/34023
 
-[unreleased]: https://github.com/metarhia/metavm/compare/v1.4.2...HEAD
+[unreleased]: https://github.com/metarhia/metavm/compare/v1.4.3...HEAD
+[1.4.3]: https://github.com/metarhia/metavm/compare/v1.4.2...v1.4.3
 [1.4.2]: https://github.com/metarhia/metavm/compare/v1.4.1...v1.4.2
 [1.4.1]: https://github.com/metarhia/metavm/compare/v1.4.0...v1.4.1
 [1.4.0]: https://github.com/metarhia/metavm/compare/v1.3.0...v1.4.0
