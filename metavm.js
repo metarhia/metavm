@@ -167,14 +167,31 @@ class MetaScript {
 
 const createScript = (name, src, options) => new MetaScript(name, src, options);
 
-const readScript = async (filePath, options) => {
+const readScript = async (filePath, options = {}) => {
   const src = await fsp.readFile(filePath, 'utf8');
   if (src === '') throw new SyntaxError(`File ${filePath} is empty`);
-  const name = options?.filename
-    ? options.filename
-    : path.basename(filePath, '.js');
-  const script = new MetaScript(name, src, options);
+  const name = options.filename ?? path.basename(filePath, '.js');
+  const script = createScript(name, src, options);
   return script;
+};
+
+const readDirectory = async (dir, options) => {
+  const files = await fsp.readdir(dir, { withFileTypes: true });
+  const container = {};
+  const tasks = [];
+  for (const file of files) {
+    const { name } = file;
+    if (file.isFile() && !name.endsWith('.js')) continue;
+    const location = path.join(dir, name);
+    const key = path.basename(name, '.js');
+    const loader = file.isFile() ? readScript : readDirectory;
+    const task = loader(location, options).then((script) => {
+      container[key] = script;
+    });
+    tasks.push(task);
+  }
+  await Promise.all(tasks);
+  return container;
 };
 
 module.exports = {
@@ -186,4 +203,5 @@ module.exports = {
   NODE_CONTEXT,
   MODULE_TYPE,
   readScript,
+  readDirectory,
 };
