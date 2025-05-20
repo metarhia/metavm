@@ -2,6 +2,11 @@
 
 ## [Unreleased][unreleased]
 
+## [1.4.4][] - 2025-05-21
+
+- Add node.js 24 to CI
+- Update dependencies
+
 ## [1.4.3][] - 2024-09-13
 
 - Update eslint/prettier/metarhia configs
@@ -107,7 +112,8 @@ First metavm implementation with following features
 - Contexts, use default empty and frozen, emulated or pass one
 - Use `microtaskMode` https://github.com/nodejs/node/pull/34023
 
-[unreleased]: https://github.com/metarhia/metavm/compare/v1.4.3...HEAD
+[unreleased]: https://github.com/metarhia/metavm/compare/v1.4.4...HEAD
+[1.4.4]: https://github.com/metarhia/metavm/compare/v1.4.3...v1.4.4
 [1.4.3]: https://github.com/metarhia/metavm/compare/v1.4.2...v1.4.3
 [1.4.2]: https://github.com/metarhia/metavm/compare/v1.4.1...v1.4.2
 [1.4.1]: https://github.com/metarhia/metavm/compare/v1.4.0...v1.4.1
