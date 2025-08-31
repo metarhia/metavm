@@ -2,6 +2,11 @@
 
 ## [Unreleased][unreleased]
 
+## [1.4.5][] - 2025-08-31
+
+- Update dependencies to latest versions
+- Simplify Node.js engines requirement to >=18
+
 ## [1.4.4][] - 2025-05-21
 
 - Add node.js 24 to CI
@@ -112,7 +117,8 @@ First metavm implementation with following features
 - Contexts, use default empty and frozen, emulated or pass one
 - Use `microtaskMode` https://github.com/nodejs/node/pull/34023
 
-[unreleased]: https://github.com/metarhia/metavm/compare/v1.4.4...HEAD
+[unreleased]: https://github.com/metarhia/metavm/compare/v1.4.5...HEAD
+[1.4.5]: https://github.com/metarhia/metavm/compare/v1.4.4...v1.4.5
 [1.4.4]: https://github.com/metarhia/metavm/compare/v1.4.3...v1.4.4
 [1.4.3]: https://github.com/metarhia/metavm/compare/v1.4.2...v1.4.3
 [1.4.2]: https://github.com/metarhia/metavm/compare/v1.4.1...v1.4.2
