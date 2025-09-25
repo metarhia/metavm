@@ -42,3 +42,8 @@ export function readScript(
   filePath: string,
   options?: BaseOptions,
 ): Promise<MetaScript>;
+
+export function readScripts(
+  dir: string,
+  options?: BaseOptions,
+): Promise<Record<string, MetaScript>>;

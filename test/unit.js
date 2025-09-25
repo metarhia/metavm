@@ -65,6 +65,33 @@ test('Load script', async () => {
   assert.strictEqual(ms.exports.add(2, 3), 5);
 });
 
+test('Load directory', async () => {
+  const dir = path.join(examples, 'methods');
+  const metaScripts = await metavm.readDirectory(dir);
+
+  assert.strictEqual(typeof metaScripts, 'object');
+  assert.ok('a-simple' in metaScripts);
+  assert.ok('b-simple' in metaScripts);
+
+  const scripts = Object.values(metaScripts);
+
+  assert.strictEqual(scripts.length, 2);
+
+  for (const ms of scripts) {
+    assert.strictEqual(typeof ms.exports, 'object');
+
+    const fields = Object.keys(ms);
+    assert.deepEqual(fields, SCRIPT_FIELDS);
+
+    const keys = Object.keys(ms.exports);
+    assert.deepEqual(keys, ['field', 'add', 'sub']);
+
+    assert.strictEqual(ms.exports.field, 'value');
+    assert.strictEqual(ms.exports.sub(2, 3), -1);
+    assert.strictEqual(ms.exports.add(2, 3), 5);
+  }
+});
+
 test('Load empty script', async () => {
   try {
     const filePath = path.join(examples, 'simple');
