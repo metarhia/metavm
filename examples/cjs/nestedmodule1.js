@@ -1,3 +1,5 @@
+'use strict';
+
 module.exports = {
   name: 'nestedmodule1',
   value: 1,

@@ -5,7 +5,7 @@ const assert = require('node:assert');
 const path = require('node:path');
 const metavm = require('..');
 
-const examples = path.join(__dirname, '../examples');
+const examples = path.join(__dirname, '../examples/cjs');
 
 test('Access with readScript', async () => {
   const filePath = path.join(examples, 'nestedmodule1.js');

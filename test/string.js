@@ -67,7 +67,7 @@ test('Check native fetch', async () => {
 test('Access for node internal module', async () => {
   const sandbox = {};
   sandbox.global = sandbox;
-  const src = `module.exports = { fs: require('fs') };`;
+  const src = `'use strict'; module.exports = { fs: require('fs') };`;
   const ms = metavm.createScript('Example', src, {
     context: metavm.createContext(sandbox),
     dirname: __dirname,
@@ -82,6 +82,7 @@ test('Access for node internal module', async () => {
 
 test('Access for stub module', async () => {
   const src = `
+    'use strict';
     const fs = require('fs');
     module.exports = {
       async useStub() {
@@ -109,7 +110,7 @@ test('Access for stub module', async () => {
 
 test('Access internal not permitted', async () => {
   try {
-    const src = `const fs = require('fs');`;
+    const src = `'use strict'; const fs = require('fs');`;
     const ms = metavm.createScript('Example', src, {
       type: metavm.MODULE_TYPE.COMMONJS,
     });
@@ -121,7 +122,7 @@ test('Access internal not permitted', async () => {
 
 test('Access non-existent not permitted', async () => {
   try {
-    const src = `const notExist = require('nothing');`;
+    const src = `'use strict'; const notExist = require('nothing');`;
     const ms = metavm.createScript('Example', src, {
       type: metavm.MODULE_TYPE.COMMONJS,
     });
@@ -133,7 +134,9 @@ test('Access non-existent not permitted', async () => {
 
 test('Access non-existent module', async () => {
   try {
-    const src = `const notExist = require('metalog');`;
+    const src = `'use strict';
+      const notExist = require('metalog');
+    `;
     const ms = metavm.createScript('Example', src, {
       access: {
         metalog: true,
@@ -149,13 +152,15 @@ test('Access non-existent module', async () => {
 test('Access nestsed commonjs', async () => {
   const sandbox = {};
   sandbox.global = sandbox;
-  const src = `module.exports = require('../examples/nestedmodule1');`;
+  const src = `'use strict';
+    module.exports = require('../examples/cjs/nestedmodule1');
+  `;
   const ms = metavm.createScript('Example', src, {
     context: metavm.createContext(sandbox),
     dirname: __dirname,
     access: {
-      '../examples/nestedmodule1.js': true,
-      '../examples/nestedmodule2.js': true,
+      '../examples/cjs/nestedmodule1.js': true,
+      '../examples/cjs/nestedmodule2.js': true,
     },
     type: metavm.MODULE_TYPE.COMMONJS,
   });
@@ -164,7 +169,10 @@ test('Access nestsed commonjs', async () => {
 });
 
 test('Access folder (path prefix)', async () => {
-  const src = `module.exports = require('../examples/nestedmodule1.js');`;
+  const src = `
+    'use strict';
+    module.exports = require('../examples/cjs/nestedmodule1.js');
+  `;
   const ms = metavm.createScript('Example', src, {
     dirname: __dirname,
     access: {
@@ -178,11 +186,15 @@ test('Access folder (path prefix)', async () => {
 
 test('Access nestsed not permitted', async () => {
   try {
-    const src = `module.exports = require('../examples/nestedmodule1.js');`;
+    const src = `
+      'use strict';
+
+      module.exports = require('../examples/cjs/nestedmodule1.js');
+    `;
     const ms = metavm.createScript('Example', src, {
       dirname: __dirname,
       access: {
-        '../examples/nestedmodule1.js': true,
+        '../examples/cjs/nestedmodule1.js': true,
       },
       type: metavm.MODULE_TYPE.COMMONJS,
     });
@@ -194,7 +206,7 @@ test('Access nestsed not permitted', async () => {
 });
 
 test('Access nestsed npm modules', async () => {
-  const src = `module.exports = require('typescript');`;
+  const src = `'use strict';module.exports = require('typescript');`;
   const ms = metavm.createScript('Example', src, {
     access: {
       typescript: true,
@@ -205,7 +217,9 @@ test('Access nestsed npm modules', async () => {
 });
 
 test('Prevent eval for common.js modules', async () => {
-  const src = `module.exports = eval('100 * 2');`;
+  const src = `
+    'use strict';module.exports = eval('100 * 2');
+  `;
   try {
     metavm.createScript('Example', src, {
       type: metavm.MODULE_TYPE.COMMONJS,
