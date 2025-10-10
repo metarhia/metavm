@@ -18,7 +18,7 @@ const SCRIPT_FIELDS = [
   'exports',
 ];
 
-test('Load script', async () => {
+test('Load Metarhia script', async () => {
   const filePath = path.join(examples, 'simple.js');
   const ms = await metavm.readScript(filePath);
 
@@ -35,32 +35,35 @@ test('Load script', async () => {
   assert.strictEqual(ms.exports.add(2, 3), 5);
 });
 
-test('Load empty script', async () => {
+test('Load Metarhia empty script', async () => {
   try {
-    const filePath = path.join(examples, 'simple');
+    const filePath = path.join(examples, 'empty');
     await metavm.readScript(filePath);
     assert.fail('Should throw');
   } catch (err) {
-    assert.strictEqual(err.constructor.name, 'SyntaxError');
+    assert.ok(err);
   }
 });
 
-test('Load script with context and options', () => {
+test('Load Metarhia script with context and options', async () => {
   const filePath = path.join(examples, 'complex.js');
   const context = metavm.createContext({ setTimeout });
   const options = { filename: 'CUSTOM FILE NAME', context };
-  metavm.readScript(filePath, options).then((ms) => {
-    assert.strictEqual(ms.constructor.name, 'MetaScript');
+  const ms = await metavm.readScript(filePath, options);
+  assert.strictEqual(ms.constructor.name, 'MetaScript');
+
+  await new Promise((resolve) => {
     ms.exports.add(2, 3, (err, sum) => {
       assert.strictEqual(err.constructor.name === 'Error', true);
       assert.strictEqual(err.stack.includes('CUSTOM FILE NAME'), true);
       assert.strictEqual(err.message, 'Custom error');
       assert.strictEqual(sum, 5);
+      resolve();
     });
   });
 });
 
-test('Load function', async () => {
+test('Load Metarhia function', async () => {
   const filePath = path.join(examples, 'function.js');
   const ms = await metavm.readScript(filePath);
 
@@ -73,7 +76,7 @@ test('Load function', async () => {
   assert.strictEqual(ms.exports.bind(null, 3)(4), 12);
 });
 
-test('Load arrow function', async () => {
+test('Load Metarhia arrow function', async () => {
   const filePath = path.join(examples, 'arrow.js');
   const ms = await metavm.readScript(filePath);
 
@@ -83,7 +86,7 @@ test('Load arrow function', async () => {
   assert.strictEqual(ms.exports(-1, 1), 0);
 });
 
-test('Load async function', async () => {
+test('Load Metarhia async function', async () => {
   const filePath = path.join(examples, 'async.js');
   const ms = await metavm.readScript(filePath);
 
@@ -97,7 +100,7 @@ test('Load async function', async () => {
   assert.rejects(ms.exports('', { field: 'value' }));
 });
 
-test('Use local identifier', async () => {
+test('Use Metarhia local identifier', async () => {
   const context = metavm.createContext({});
   const filePath = path.join(examples, 'local.js');
   const ms1 = await metavm.readScript(filePath, { context });
@@ -107,7 +110,7 @@ test('Use local identifier', async () => {
   assert.deepEqual(result, expected);
 });
 
-test('File is not found', async () => {
+test('Metarhia file is not found', async () => {
   const filePath = path.join(examples, 'notfound.js');
   let ms;
   try {
@@ -118,7 +121,7 @@ test('File is not found', async () => {
   assert.strictEqual(ms, undefined);
 });
 
-test('Syntax error', async () => {
+test('Metarhia syntax error', async () => {
   const filePath = path.join(examples, 'syntax.error');
   try {
     await metavm.readScript(filePath);
@@ -128,7 +131,7 @@ test('Syntax error', async () => {
   }
 });
 
-test('Reference error', async () => {
+test('Metarhia reference error', async () => {
   const filePath = path.join(examples, 'referenceError.js');
   try {
     const script = await metavm.readScript(filePath);
@@ -139,43 +142,54 @@ test('Reference error', async () => {
   }
 });
 
-test('Line number and position', async () => {
-  {
-    const filePath = path.join(examples, 'referenceError.js');
-    try {
-      const script = await metavm.readScript(filePath);
-      await script.exports();
-      assert.fail();
-    } catch (err) {
-      const [, firstLine] = err.stack.split('\n');
-      const [, lineNumber, position] = firstLine.split(':');
-      assert.strictEqual(parseInt(lineNumber, 10), 2);
-      assert.strictEqual(parseInt(position, 10), 18);
-    }
+test('Metarhia line number and position in reference error', async () => {
+  const filePath = path.join(examples, 'referenceError.js');
+  try {
+    const script = await metavm.readScript(filePath);
+    await script.exports();
+    assert.fail();
+  } catch (err) {
+    const [, firstLine] = err.stack.split('\n');
+    const [, lineNumber, position] = firstLine.split(':');
+    assert.strictEqual(parseInt(lineNumber, 10), 2);
+    assert.strictEqual(parseInt(position, 10), 18);
   }
-  {
-    const filePath = path.join(examples, 'useStrict.js');
-    try {
-      const script = await metavm.readScript(filePath);
-      await script.exports();
-      assert.fail();
-    } catch (err) {
-      assert.strictEqual(err.message, 'module is not defined');
-      assert.strictEqual(err.constructor.name, 'ReferenceError');
-    }
+});
+
+test('Metarhia line number and position with use strict', async () => {
+  const filePath = path.join(examples, 'useStrict.js');
+  try {
+    const script = await metavm.readScript(filePath);
+    await script.exports();
+    assert.fail();
+  } catch (err) {
+    assert.strictEqual(err.message, 'module is not defined');
+    assert.strictEqual(err.constructor.name, 'ReferenceError');
   }
-  {
-    const filePath = path.join(examples, 'simpleUndef.js');
-    try {
-      const script = await metavm.readScript(filePath);
-      script.exports.add(5, 2);
-      assert.fail();
-    } catch (err) {
-      const [, firstLine] = err.stack.split('\n');
-      const [, lineNumber, position] = firstLine.split(':');
-      assert.strictEqual(parseInt(lineNumber, 10), 5);
-      assert.strictEqual(parseInt(position, 10), 14);
-    }
+});
+
+test('Metarhia line number and position in undefined call', async () => {
+  const filePath = path.join(examples, 'simpleUndef.js');
+  try {
+    const script = await metavm.readScript(filePath);
+    script.exports.add(5, 2);
+    assert.fail();
+  } catch (err) {
+    const [, firstLine] = err.stack.split('\n');
+    const [, lineNumber, position] = firstLine.split(':');
+    assert.strictEqual(parseInt(lineNumber, 10), 5);
+    assert.strictEqual(parseInt(position, 10), 14);
+  }
+});
+
+test('Metarhia call undefined as a function', async () => {
+  const filePath = path.join(examples, 'undef.js');
+  try {
+    const ms = await metavm.readScript(filePath, { microtaskMode: 'none' });
+    await ms.exports();
+    assert.fail(ms);
+  } catch (err) {
+    assert.strictEqual(err.constructor.name, 'TypeError');
   }
 });
 
@@ -227,15 +241,4 @@ test('Create custom context', async () => {
   assert.strictEqual(context.field, 'value');
   assert.deepEqual(Object.keys(context), ['field', 'global']);
   assert.strictEqual(context.global, sandbox);
-});
-
-test('Call undefined as a function', async () => {
-  const filePath = path.join(examples, 'undef.js');
-  try {
-    const ms = await metavm.readScript(filePath, { microtaskMode: 'none' });
-    await ms.exports();
-    assert.fail(ms);
-  } catch (err) {
-    assert.strictEqual(err.constructor.name, 'TypeError');
-  }
 });

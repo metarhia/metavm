@@ -16,6 +16,18 @@ module.exports = [
     },
   },
   {
+    files: ['examples/**/*.mjs'],
+    rules: {
+      strict: 'off',
+    },
+    languageOptions: {
+      sourceType: 'module',
+      globals: {
+        unknownFunction: true,
+      },
+    },
+  },
+  {
     files: ['dist/**/*.js'],
     languageOptions: {
       sourceType: 'module',
