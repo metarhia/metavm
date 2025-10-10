@@ -1,6 +1,7 @@
 import { Context, Script, ScriptOptions } from 'node:vm';
 
 export const EMPTY_CONTEXT: Context;
+export const EMPTY_CJS: Context;
 export const COMMON_CONTEXT: Context;
 export const NODE_CONTEXT: Context;
 
@@ -12,6 +13,7 @@ export function createContext(
 ): Context;
 
 export enum MODULE_TYPE {
+  AUTO = 0,
   METARHIA = 1,
   COMMONJS = 2,
   ECMA = 3,
