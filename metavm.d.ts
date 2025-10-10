@@ -1,4 +1,4 @@
-import { Context, Script, ScriptOptions, BaseOptions } from 'node:vm';
+import { Context, Script, ScriptOptions } from 'node:vm';
 
 export const EMPTY_CONTEXT: Context;
 export const COMMON_CONTEXT: Context;
@@ -11,22 +11,27 @@ export function createContext(
   preventEscape?: boolean,
 ): Context;
 
-declare enum ModuleType {
+export enum MODULE_TYPE {
   METARHIA = 1,
   COMMONJS = 2,
+  ECMA = 3,
 }
 
 export interface MetaScriptOptions extends ScriptOptions {
-  type?: ModuleType;
+  type?: MODULE_TYPE;
   dirname?: string;
   relative?: string;
   context?: Context;
-  access?: object;
+  access?: Record<string, boolean | object>;
 }
 
 export class MetaScript {
   constructor(name: string, src: string, options?: MetaScriptOptions);
   name: string;
+  dirname: string;
+  relative: string;
+  type: MODULE_TYPE;
+  access: Record<string, boolean | object>;
   script: Script;
   context: Context;
   exports: any;
@@ -40,5 +45,5 @@ export function createScript(
 
 export function readScript(
   filePath: string,
-  options?: BaseOptions,
+  options?: MetaScriptOptions,
 ): Promise<MetaScript>;

@@ -31,8 +31,7 @@ MetaScript {
 }
 ```
 
-Script contains function expression. You can use it for api endpoints, domain
-logic stored in files or database, etc.
+Script contains function expression. You can use it for api endpoints, domain logic stored in files or database, etc.
 
 ```js
 const metavm = require('metavm');
@@ -53,26 +52,40 @@ MetaScript {
 }
 ```
 
-## Read script from file
+CommonJS format
 
 ```js
-const metavm = require('.');
+const metavm = require('metavm');
 
-(async () => {
-  const ms = await metavm.readScript('./test/examples/simple.js');
-  console.log(ms);
-})();
+const src = `module.exports = { field: 'value' };`;
+const ms = metavm.createScript('Example', src, {
+  type: metavm.MODULE_TYPE.COMMONJS,
+});
+console.log(ms.exports); // { field: 'value' }
 ```
 
-Output:
+## Read script from file
 
+Metarhia format
+
+```js
+const metavm = require('metavm');
+
+const ms = await metavm.readScript('./examples/metarhia/simple.js');
+console.log(ms.exports);
+// { field: 'value', add: [Function: add], sub: [Function: sub] }
 ```
-MetaScript {
-  name: 'simple',
-  script: Script {},
-  context: {},
-  exports: { field: 'value', add: [Function: add], sub: [Function: sub] }
-}
+
+CommonJS format
+
+```js
+const metavm = require('metavm');
+
+const ms = await metavm.readScript('./examples/cjssimple.js', {
+  type: metavm.MODULE_TYPE.COMMONJS,
+});
+console.log(ms.exports);
+// { field: 'value', add: [Function: add], sub:[Function: sub] }
 ```
 
 ## License & Contributors

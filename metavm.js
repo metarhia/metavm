@@ -180,6 +180,7 @@ const readScript = async (filePath, options) => {
 module.exports = {
   createContext,
   MetaScript,
+  MetavmError,
   createScript,
   EMPTY_CONTEXT,
   COMMON_CONTEXT,
