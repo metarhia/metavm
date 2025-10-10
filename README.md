@@ -81,11 +81,11 @@ CommonJS format
 ```js
 const metavm = require('metavm');
 
-const ms = await metavm.readScript('./examples/cjssimple.js', {
+const ms = await metavm.readScript('./examples/cjs/simple.js', {
   type: metavm.MODULE_TYPE.COMMONJS,
 });
 console.log(ms.exports);
-// { field: 'value', add: [Function: add], sub:[Function: sub] }
+// { field: 'value', add: [Function: add], sub: [Function: sub] }
 ```
 
 ## License & Contributors
