@@ -186,8 +186,7 @@ test('Access nestsed not permitted', async () => {
       },
       type: metavm.MODULE_TYPE.COMMONJS,
     });
-    assert.ok(ms);
-    assert.fail('Should not be loaded');
+    assert.fail('Should not be loaded', ms);
   } catch (err) {
     const module2 = './nestedmodule2.js';
     assert.strictEqual(err.message, `Access denied '${module2}'`);
@@ -220,17 +219,17 @@ test('Prevent eval for common.js modules', async () => {
 test('ECMAScript modules', async () => {
   const sandbox = {};
   sandbox.global = sandbox;
-  const src = `const fn = x => x;
-export { fn };
-`;
+  const src = `
+    const fn = x => x;
+    export { fn };
+  `;
   try {
     const ms = metavm.createScript('Example', src, {
       context: metavm.createContext(sandbox),
       dirname: __dirname,
       type: metavm.MODULE_TYPE.ECMA,
     });
-    assert.ok(ms);
-    assert.fail();
+    assert.fail(ms);
   } catch (err) {
     assert.ok(err);
   }
