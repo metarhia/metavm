@@ -236,7 +236,7 @@ test('Call undefined as a function', async () => {
   try {
     const ms = await metavm.readScript(filePath, { microtaskMode: 'none' });
     await ms.exports();
-    assert.fail();
+    assert.fail(ms);
   } catch (err) {
     assert.strictEqual(err.constructor.name, 'TypeError');
   }
