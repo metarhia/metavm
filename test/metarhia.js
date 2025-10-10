@@ -159,7 +159,8 @@ test('Metarhia line number and position in reference error', async () => {
 test('Metarhia line number and position with use strict', async () => {
   const filePath = path.join(examples, 'useStrict.js');
   try {
-    const script = await metavm.readScript(filePath);
+    const options = { type: metavm.MODULE_TYPE.METARHIA };
+    const script = await metavm.readScript(filePath, options);
     await script.exports();
     assert.fail();
   } catch (error) {

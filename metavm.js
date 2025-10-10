@@ -17,6 +17,7 @@ const CONTEXT_OPTIONS = {
 };
 
 const MODULE_TYPE = {
+  AUTO: 0,
   METARHIA: 1,
   COMMONJS: 2,
   ECMA: 3,
@@ -63,6 +64,8 @@ const NODE = { global, console, process };
 const EMPTY_CONTEXT = vm.createContext(Object.freeze({}), CONTEXT_OPTIONS);
 const COMMON_CONTEXT = vm.createContext(Object.freeze({ ...DEFAULT }));
 const NODE_CONTEXT = vm.createContext(Object.freeze({ ...DEFAULT, ...NODE }));
+const CONTEXT_CJS = Object.freeze({ module: {} });
+const EMPTY_CJS = vm.createContext(CONTEXT_CJS, CONTEXT_OPTIONS);
 
 class MetavmError extends Error {}
 
@@ -72,12 +75,10 @@ const createContext = (context, preventEscape = false) => {
   return vm.createContext(context, { ...CONTEXT_OPTIONS, ...options });
 };
 
-const SRC_BEFORE = '((exports, require, module, __filename, __dirname) => { ';
-const SRC_AFTER = '\n});';
-const wrapSource = (src) => SRC_BEFORE + src + SRC_AFTER;
+const wrapSource = (source) =>
+  `((exports, require, module, __filename, __dirname) => { ${source}\n});`;
 
 const USE_STRICT = `'use strict';\n`;
-const useStrict = (src) => (src.startsWith(USE_STRICT) ? '' : USE_STRICT);
 
 const addExt = (name) => {
   if (name.toLocaleLowerCase().endsWith('.js')) return name;
@@ -94,15 +95,23 @@ class MetaScript {
     this.name = name;
     this.dirname = options.dirname || process.cwd();
     this.relative = options.relative || '.';
-    this.type = options.type || MODULE_TYPE.METARHIA;
+    this.type = options.type || MODULE_TYPE.AUTO;
     this.access = options.access || {};
+    if (this.type === MODULE_TYPE.AUTO) {
+      if (src.includes('module.exports')) this.type = MODULE_TYPE.COMMONJS;
+      else this.type = MODULE_TYPE.METARHIA;
+    }
     const common = this.type === MODULE_TYPE.COMMONJS;
-    const strict = useStrict(src);
+    const strict = src.startsWith(USE_STRICT) ? '' : USE_STRICT;
     const code = common ? wrapSource(src) : `{\n${src}\n}`;
     const lineOffset = strict === '' ? -1 : -2;
     const scriptOptions = { filename: name, ...options, lineOffset };
     this.script = new vm.Script(strict + code, scriptOptions);
-    this.context = options.context || createContext();
+
+    if (options.context) this.context = options.context;
+    else if (this.type === MODULE_TYPE.COMMONJS) this.context = EMPTY_CJS;
+    else this.context = EMPTY_CONTEXT;
+
     const runOptions = { ...RUN_OPTIONS, ...options };
     const exports = this.script.runInContext(this.context, runOptions);
     this.exports = common ? this.commonExports(exports) : exports;
@@ -183,6 +192,7 @@ module.exports = {
   MetavmError,
   createScript,
   EMPTY_CONTEXT,
+  EMPTY_CJS,
   COMMON_CONTEXT,
   NODE_CONTEXT,
   MODULE_TYPE,
