@@ -69,7 +69,7 @@ test('Load empty script', async () => {
   try {
     const filePath = path.join(examples, 'simple');
     await metavm.readScript(filePath);
-    test.fail('Should throw');
+    assert.fail('Should throw');
   } catch (err) {
     assert.strictEqual(err.constructor.name, 'SyntaxError');
   }
@@ -152,7 +152,7 @@ test('Syntax error', async () => {
   const filePath = path.join(examples, 'syntax.error');
   try {
     await metavm.readScript(filePath);
-    test.fail();
+    assert.fail();
   } catch (err) {
     assert.strictEqual(err.constructor.name, 'SyntaxError');
   }
@@ -163,7 +163,7 @@ test('Reference error', async () => {
   try {
     const script = await metavm.readScript(filePath);
     await script.exports();
-    test.fail();
+    assert.fail();
   } catch (err) {
     assert.strictEqual(err.constructor.name, 'ReferenceError');
   }
@@ -175,7 +175,7 @@ test('Line number and position', async () => {
     try {
       const script = await metavm.readScript(filePath);
       await script.exports();
-      test.fail();
+      assert.fail();
     } catch (err) {
       const [, firstLine] = err.stack.split('\n');
       const [, lineNumber, position] = firstLine.split(':');
@@ -188,7 +188,7 @@ test('Line number and position', async () => {
     try {
       const script = await metavm.readScript(filePath);
       await script.exports();
-      test.fail();
+      assert.fail();
     } catch (err) {
       const [, firstLine] = err.stack.split('\n');
       const [, lineNumber, position] = firstLine.split(':');
@@ -201,7 +201,7 @@ test('Line number and position', async () => {
     try {
       const script = await metavm.readScript(filePath);
       script.exports.add(5, 2);
-      test.fail();
+      assert.fail();
     } catch (err) {
       const [, firstLine] = err.stack.split('\n');
       const [, lineNumber, position] = firstLine.split(':');
@@ -266,7 +266,7 @@ test('Call undefined as a function', async () => {
   try {
     const ms = await metavm.readScript(filePath, { microtaskMode: 'none' });
     await ms.exports();
-    test.fail();
+    assert.fail();
   } catch (err) {
     assert.strictEqual(err.constructor.name, 'TypeError');
   }
@@ -407,7 +407,8 @@ test('Access nestsed not permitted', async () => {
       },
       type: metavm.MODULE_TYPE.COMMONJS,
     });
-    test.fail('Should not be loaded', ms);
+    assert.ok(ms);
+    assert.fail('Should not be loaded');
   } catch (err) {
     const module2 = './nestedmodule2.js';
     assert.strictEqual(err.message, `Access denied '${module2}'`);
@@ -431,7 +432,7 @@ test('Prevent eval for common.js modules', async () => {
     metavm.createScript('Example', src, {
       type: metavm.MODULE_TYPE.COMMONJS,
     });
-    test.fail();
+    assert.fail();
   } catch (error) {
     assert.strictEqual(error.constructor.name, 'EvalError');
   }
@@ -441,7 +442,7 @@ test('Erevent eval for Metarhia modules', async () => {
   const src = `eval('100 * 2')`;
   try {
     metavm.createScript('Example', src);
-    test.fail();
+    assert.fail();
   } catch (error) {
     assert.strictEqual(error.constructor.name, 'EvalError');
   }
@@ -468,7 +469,8 @@ export { fn };
       dirname: __dirname,
       type: metavm.MODULE_TYPE.ECMA,
     });
-    test.fail(ms);
+    assert.ok(ms);
+    assert.fail();
   } catch (err) {
     assert.ok(err);
   }
