@@ -2,6 +2,12 @@
 
 ## [Unreleased][unreleased]
 
+- Add more CJS and ESM examples and tests
+- Move test examples to separate folders
+- Change test.fail to asserts
+- Refactor err to error
+- Optimize asserts and formatting
+
 ## [1.4.5][] - 2025-08-31
 
 - Update dependencies to latest versions
