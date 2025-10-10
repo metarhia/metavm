@@ -1,6 +1,6 @@
 'use strict';
 
-async () => {
+module.exports = async () => {
   const result = unknownFunction();
   return result;
 };

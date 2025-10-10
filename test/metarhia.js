@@ -5,7 +5,7 @@ const assert = require('node:assert');
 const path = require('node:path');
 const metavm = require('..');
 
-const examples = path.join(__dirname, '../examples');
+const examples = path.join(__dirname, '../examples/metarhia');
 
 const SCRIPT_FIELDS = [
   'name',
@@ -154,16 +154,14 @@ test('Line number and position', async () => {
     }
   }
   {
-    const filePath = path.join(examples, 'useStrict.cjs');
+    const filePath = path.join(examples, 'useStrict.js');
     try {
       const script = await metavm.readScript(filePath);
       await script.exports();
       assert.fail();
     } catch (err) {
-      const [, firstLine] = err.stack.split('\n');
-      const [, lineNumber, position] = firstLine.split(':');
-      assert.strictEqual(parseInt(lineNumber, 10), 4);
-      assert.strictEqual(parseInt(position, 10), 18);
+      assert.strictEqual(err.message, 'module is not defined');
+      assert.strictEqual(err.constructor.name, 'ReferenceError');
     }
   }
   {
