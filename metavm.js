@@ -156,8 +156,8 @@ class MetaScript {
         const opt = { context, type, dirname, relative, access };
         const script = new MetaScript(name, src, opt);
         return script.exports;
-      } catch (err) {
-        if (err instanceof MetavmError) throw err;
+      } catch (error) {
+        if (error instanceof MetavmError) throw error;
         throw new MetavmError(`Cannot find module '${module}'`);
       }
     };

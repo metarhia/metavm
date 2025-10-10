@@ -44,8 +44,8 @@ test('Load CJS empty script', async () => {
       type: metavm.MODULE_TYPE.COMMONJS,
     });
     assert.fail('Should throw');
-  } catch (err) {
-    assert.strictEqual(err.constructor.name, 'SyntaxError');
+  } catch (error) {
+    assert.strictEqual(error.constructor.name, 'SyntaxError');
   }
 });
 
@@ -134,8 +134,8 @@ test('CJS syntax error', async () => {
       type: metavm.MODULE_TYPE.COMMONJS,
     });
     assert.fail();
-  } catch (err) {
-    assert.strictEqual(err.constructor.name, 'SyntaxError');
+  } catch (error) {
+    assert.strictEqual(error.constructor.name, 'SyntaxError');
   }
 });
 
@@ -147,8 +147,8 @@ test('CJS reference error', async () => {
     });
     await script.exports();
     assert.fail();
-  } catch (err) {
-    assert.strictEqual(err.constructor.name, 'ReferenceError');
+  } catch (error) {
+    assert.strictEqual(error.constructor.name, 'ReferenceError');
   }
 });
 
@@ -160,8 +160,8 @@ test('CJS line number and position in reference error', async () => {
     });
     await script.exports();
     assert.fail();
-  } catch (err) {
-    const [, firstLine] = err.stack.split('\n');
+  } catch (error) {
+    const [, firstLine] = error.stack.split('\n');
     const [, lineNumber, position] = firstLine.split(':');
     assert.strictEqual(parseInt(lineNumber, 10), 3);
     assert.strictEqual(parseInt(position, 10), 18);
@@ -176,8 +176,8 @@ test('CJS line number and position in undefined call', async () => {
     });
     script.exports.add(5, 2);
     assert.fail();
-  } catch (err) {
-    const [, firstLine] = err.stack.split('\n');
+  } catch (error) {
+    const [, firstLine] = error.stack.split('\n');
     const [, lineNumber, position] = firstLine.split(':');
     assert.strictEqual(parseInt(lineNumber, 10), 6);
     assert.strictEqual(parseInt(position, 10), 14);
@@ -193,8 +193,8 @@ test('CJS call undefined as a function', async () => {
     });
     await ms.exports();
     assert.fail();
-  } catch (err) {
-    assert.strictEqual(err.constructor.name, 'TypeError');
+  } catch (error) {
+    assert.strictEqual(error.constructor.name, 'TypeError');
   }
 });
 

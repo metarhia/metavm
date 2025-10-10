@@ -115,8 +115,8 @@ test('Access internal not permitted', async () => {
       type: metavm.MODULE_TYPE.COMMONJS,
     });
     assert.strictEqual(ms, undefined);
-  } catch (err) {
-    assert.strictEqual(err.message, `Access denied 'fs'`);
+  } catch (error) {
+    assert.strictEqual(error.message, `Access denied 'fs'`);
   }
 });
 
@@ -127,8 +127,8 @@ test('Access non-existent not permitted', async () => {
       type: metavm.MODULE_TYPE.COMMONJS,
     });
     assert.strictEqual(ms, undefined);
-  } catch (err) {
-    assert.strictEqual(err.message, `Access denied 'nothing'`);
+  } catch (error) {
+    assert.strictEqual(error.message, `Access denied 'nothing'`);
   }
 });
 
@@ -144,8 +144,8 @@ test('Access non-existent module', async () => {
       type: metavm.MODULE_TYPE.COMMONJS,
     });
     assert.strictEqual(ms, undefined);
-  } catch (err) {
-    assert.strictEqual(err.message, `Cannot find module 'metalog'`);
+  } catch (error) {
+    assert.strictEqual(error.message, `Cannot find module 'metalog'`);
   }
 });
 
@@ -199,9 +199,9 @@ test('Access nestsed not permitted', async () => {
       type: metavm.MODULE_TYPE.COMMONJS,
     });
     assert.fail('Should not be loaded', ms);
-  } catch (err) {
+  } catch (error) {
     const module2 = './nestedmodule2.js';
-    assert.strictEqual(err.message, `Access denied '${module2}'`);
+    assert.strictEqual(error.message, `Access denied '${module2}'`);
   }
 });
 
@@ -244,7 +244,7 @@ test('ECMAScript modules', async () => {
       type: metavm.MODULE_TYPE.ECMA,
     });
     assert.fail(ms);
-  } catch (err) {
-    assert.ok(err);
+  } catch (error) {
+    assert.ok(error);
   }
 });

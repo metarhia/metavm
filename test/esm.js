@@ -14,8 +14,8 @@ test('Load ESM script', async () => {
       type: metavm.MODULE_TYPE.ECMA,
     });
     assert.fail('ESM not fully supported yet');
-  } catch (err) {
-    assert.ok(err);
+  } catch (error) {
+    assert.ok(error);
   }
 });
 
@@ -26,8 +26,8 @@ test('Load ESM empty script', async () => {
       type: metavm.MODULE_TYPE.ECMA,
     });
     assert.fail('Should throw');
-  } catch (err) {
-    assert.ok(err);
+  } catch (error) {
+    assert.ok(error);
   }
 });
 
@@ -42,8 +42,8 @@ test('Load ESM script with context and options', async () => {
   try {
     await metavm.readScript(filePath, options);
     assert.fail('ESM not fully supported yet');
-  } catch (err) {
-    assert.ok(err);
+  } catch (error) {
+    assert.ok(error);
   }
 });
 
@@ -54,8 +54,8 @@ test('Load ESM function', async () => {
       type: metavm.MODULE_TYPE.ECMA,
     });
     assert.fail('ESM not fully supported yet');
-  } catch (err) {
-    assert.ok(err);
+  } catch (error) {
+    assert.ok(error);
   }
 });
 
@@ -66,8 +66,8 @@ test('Load ESM arrow function', async () => {
       type: metavm.MODULE_TYPE.ECMA,
     });
     assert.fail('ESM not fully supported yet');
-  } catch (err) {
-    assert.ok(err);
+  } catch (error) {
+    assert.ok(error);
   }
 });
 
@@ -78,8 +78,8 @@ test('Load ESM async function', async () => {
       type: metavm.MODULE_TYPE.ECMA,
     });
     assert.fail('ESM not fully supported yet');
-  } catch (err) {
-    assert.ok(err);
+  } catch (error) {
+    assert.ok(error);
   }
 });
 
@@ -92,8 +92,8 @@ test('Use ESM local identifier', async () => {
       type: metavm.MODULE_TYPE.ECMA,
     });
     assert.fail('ESM not fully supported yet');
-  } catch (err) {
-    assert.ok(err);
+  } catch (error) {
+    assert.ok(error);
   }
 });
 
@@ -104,8 +104,8 @@ test('ESM syntax error', async () => {
       type: metavm.MODULE_TYPE.ECMA,
     });
     assert.fail();
-  } catch (err) {
-    assert.ok(err);
+  } catch (error) {
+    assert.ok(error);
   }
 });
 
@@ -117,8 +117,8 @@ test('ESM reference error', async () => {
     });
     await script.exports();
     assert.fail();
-  } catch (err) {
-    assert.ok(err);
+  } catch (error) {
+    assert.ok(error);
   }
 });
 
@@ -130,8 +130,8 @@ test('ESM line number and position in undefined call', async () => {
     });
     script.exports.add(5, 2);
     assert.fail();
-  } catch (err) {
-    assert.ok(err);
+  } catch (error) {
+    assert.ok(error);
   }
 });
 
@@ -144,8 +144,8 @@ test('ESM call undefined as a function', async () => {
     });
     await ms.exports();
     assert.fail();
-  } catch (err) {
-    assert.ok(err);
+  } catch (error) {
+    assert.ok(error);
   }
 });
 
@@ -160,7 +160,7 @@ test('ESM access with readScript', async () => {
       type: metavm.MODULE_TYPE.ECMA,
     });
     assert.fail('ESM not fully supported yet');
-  } catch (err) {
-    assert.ok(err);
+  } catch (error) {
+    assert.ok(error);
   }
 });
