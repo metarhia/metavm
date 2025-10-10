@@ -40,8 +40,8 @@ test('Load Metarhia empty script', async () => {
     const filePath = path.join(examples, 'empty');
     await metavm.readScript(filePath);
     assert.fail('Should throw');
-  } catch (err) {
-    assert.ok(err);
+  } catch (error) {
+    assert.ok(error);
   }
 });
 
@@ -115,8 +115,8 @@ test('Metarhia file is not found', async () => {
   let ms;
   try {
     ms = await metavm.readScript(filePath);
-  } catch (err) {
-    assert.strictEqual(err.code, 'ENOENT');
+  } catch (error) {
+    assert.strictEqual(error.code, 'ENOENT');
   }
   assert.strictEqual(ms, undefined);
 });
@@ -126,8 +126,8 @@ test('Metarhia syntax error', async () => {
   try {
     await metavm.readScript(filePath);
     assert.fail();
-  } catch (err) {
-    assert.strictEqual(err.constructor.name, 'SyntaxError');
+  } catch (error) {
+    assert.strictEqual(error.constructor.name, 'SyntaxError');
   }
 });
 
@@ -137,8 +137,8 @@ test('Metarhia reference error', async () => {
     const script = await metavm.readScript(filePath);
     await script.exports();
     assert.fail();
-  } catch (err) {
-    assert.strictEqual(err.constructor.name, 'ReferenceError');
+  } catch (error) {
+    assert.strictEqual(error.constructor.name, 'ReferenceError');
   }
 });
 
@@ -148,8 +148,8 @@ test('Metarhia line number and position in reference error', async () => {
     const script = await metavm.readScript(filePath);
     await script.exports();
     assert.fail();
-  } catch (err) {
-    const [, firstLine] = err.stack.split('\n');
+  } catch (error) {
+    const [, firstLine] = error.stack.split('\n');
     const [, lineNumber, position] = firstLine.split(':');
     assert.strictEqual(parseInt(lineNumber, 10), 2);
     assert.strictEqual(parseInt(position, 10), 18);
@@ -162,9 +162,9 @@ test('Metarhia line number and position with use strict', async () => {
     const script = await metavm.readScript(filePath);
     await script.exports();
     assert.fail();
-  } catch (err) {
-    assert.strictEqual(err.message, 'module is not defined');
-    assert.strictEqual(err.constructor.name, 'ReferenceError');
+  } catch (error) {
+    assert.strictEqual(error.message, 'module is not defined');
+    assert.strictEqual(error.constructor.name, 'ReferenceError');
   }
 });
 
@@ -174,8 +174,8 @@ test('Metarhia line number and position in undefined call', async () => {
     const script = await metavm.readScript(filePath);
     script.exports.add(5, 2);
     assert.fail();
-  } catch (err) {
-    const [, firstLine] = err.stack.split('\n');
+  } catch (error) {
+    const [, firstLine] = error.stack.split('\n');
     const [, lineNumber, position] = firstLine.split(':');
     assert.strictEqual(parseInt(lineNumber, 10), 5);
     assert.strictEqual(parseInt(position, 10), 14);
@@ -188,8 +188,8 @@ test('Metarhia call undefined as a function', async () => {
     const ms = await metavm.readScript(filePath, { microtaskMode: 'none' });
     await ms.exports();
     assert.fail(ms);
-  } catch (err) {
-    assert.strictEqual(err.constructor.name, 'TypeError');
+  } catch (error) {
+    assert.strictEqual(error.constructor.name, 'TypeError');
   }
 });
 
