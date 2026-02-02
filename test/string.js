@@ -80,6 +80,18 @@ test('Access for node internal module', async () => {
   assert.strictEqual(typeof ms.exports.fs.promises, 'object');
 });
 
+test('Access for node internal module with prefix', async () => {
+  const sandbox = {};
+  sandbox.global = sandbox;
+  const src = `'use strict'; module.exports = { fs: require('node:fs') };`;
+  const ms = metavm.createScript('Example', src, {
+    context: metavm.createContext(sandbox),
+    type: metavm.MODULE_TYPE.COMMONJS,
+  });
+  assert.strictEqual(typeof ms.exports, 'object');
+  assert.strictEqual(typeof ms.exports.fs.promises, 'object');
+});
+
 test('Access for stub module', async () => {
   const src = `
     'use strict';
