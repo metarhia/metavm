@@ -88,6 +88,43 @@ console.log(ms.exports);
 // { field: 'value', add: [Function: add], sub: [Function: sub] }
 ```
 
+## ECMAScript Modules (ESM) - Experimental
+
+ESM support is available but requires running Node.js with the `--experimental-vm-modules` flag:
+
+```bash
+node --experimental-vm-modules your-script.js
+```
+
+Example:
+
+```js
+const metavm = require('metavm');
+
+// Load ESM from file
+const ms = await metavm.readScript('./examples/esm/simple.mjs', {
+  type: metavm.MODULE_TYPE.ECMA,
+});
+console.log(ms.exports);
+// { field: 'value', add: [Function], sub: [Function] }
+
+// Create ESM from string
+const src = `const fn = x => x * 2; export { fn };`;
+const script = await metavm.createScript('Example', src, {
+  type: metavm.MODULE_TYPE.ECMA,
+});
+console.log(script.exports.fn(5)); // 10
+```
+
+**Note:** Without the experimental flag, attempting to use ESM will throw an error:
+`ECMAScript modules require --experimental-vm-modules flag`
+
+### Limitations
+
+- ESM import statements are not yet fully supported
+- Requires Node.js to be run with `--experimental-vm-modules` flag
+- The API may change as Node.js stabilizes vm module ESM support
+
 ## License & Contributors
 
 Copyright (c) 2020-2025 [Metarhia contributors](https://github.com/metarhia/metavm/graphs/contributors).

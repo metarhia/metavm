@@ -89,9 +89,6 @@ const internalRequire = require;
 
 class MetaScript {
   constructor(name, src, options = {}) {
-    if (options.type === MODULE_TYPE.ECMA) {
-      throw new Error('ECMAScript modules is not supported');
-    }
     this.name = name;
     this.dirname = options.dirname || process.cwd();
     this.relative = options.relative || '.';
@@ -101,20 +98,67 @@ class MetaScript {
       if (src.includes('module.exports')) this.type = MODULE_TYPE.COMMONJS;
       else this.type = MODULE_TYPE.METARHIA;
     }
+
+    if (this.type === MODULE_TYPE.ECMA) {
+      if (!vm.SourceTextModule) {
+        const msg = 'ECMAScript modules require --experimental-vm-modules flag';
+        throw new Error(msg);
+      }
+      this.script = null;
+      this.context = options.context || EMPTY_CONTEXT;
+      this._linker = async (specifier) => {
+        if (!this.access) throw new MetavmError(`Access denied '${specifier}'`);
+        const lib = this.checkAccess(specifier);
+        if (!lib) throw new MetavmError(`Access denied '${specifier}'`);
+        const msg = `ESM imports not fully implemented for '${specifier}'`;
+        throw new MetavmError(msg);
+      };
+      this._module = new vm.SourceTextModule(src, {
+        identifier: name,
+        context: this.context,
+        initializeImportMeta: (meta) => {
+          meta.url = `file://${path.resolve(this.dirname, name)}`;
+        },
+      });
+      this.exports = null;
+      return;
+    }
+
     const common = this.type === MODULE_TYPE.COMMONJS;
     const strict = src.startsWith(USE_STRICT) ? '' : USE_STRICT;
     const code = common ? wrapSource(src) : `{\n${src}\n}`;
     const lineOffset = strict === '' ? -1 : -2;
     const scriptOptions = { filename: name, ...options, lineOffset };
     this.script = new vm.Script(strict + code, scriptOptions);
-
-    if (options.context) this.context = options.context;
-    else if (this.type === MODULE_TYPE.COMMONJS) this.context = EMPTY_CJS;
-    else this.context = EMPTY_CONTEXT;
-
+    this.context = options.context || (common ? EMPTY_CJS : EMPTY_CONTEXT);
     const runOptions = { ...RUN_OPTIONS, ...options };
     const exports = this.script.runInContext(this.context, runOptions);
     this.exports = common ? this.commonExports(exports) : exports;
+  }
+
+  async linkAndEvaluate() {
+    if (!this._module) return;
+    await this._module.link(this._linker);
+    await this._module.evaluate();
+
+    const namespace = this._module.namespace;
+    const exports = {};
+    for (const key of Object.keys(namespace)) {
+      if (key !== 'default') {
+        exports[key] = namespace[key];
+      }
+    }
+
+    if ('default' in namespace) {
+      if (Object.keys(exports).length === 0) {
+        this.exports = namespace.default;
+      } else {
+        exports.default = namespace.default;
+        this.exports = exports;
+      }
+    } else {
+      this.exports = exports;
+    }
   }
 
   commonExports(closure) {
@@ -174,7 +218,13 @@ class MetaScript {
   }
 }
 
-const createScript = (name, src, options) => new MetaScript(name, src, options);
+const createScript = (name, src, options) => {
+  const script = new MetaScript(name, src, options);
+  if (script.type === MODULE_TYPE.ECMA) {
+    return script.linkAndEvaluate().then(() => script);
+  }
+  return script;
+};
 
 const readScript = async (filePath, options) => {
   const src = await fsp.readFile(filePath, 'utf8');
@@ -183,6 +233,9 @@ const readScript = async (filePath, options) => {
     ? options.filename
     : path.basename(filePath, '.js');
   const script = new MetaScript(name, src, options);
+  if (script.type === MODULE_TYPE.ECMA) {
+    await script.linkAndEvaluate();
+  }
   return script;
 };
 
