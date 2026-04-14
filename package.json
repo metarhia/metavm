@@ -50,6 +50,7 @@
     "@types/node": "^24.12.2",
     "eslint": "^9.39.4",
     "eslint-config-metarhia": "^9.1.9",
+    "metaskills": "^1.0.4",
     "prettier": "^3.8.2",
     "typescript": "^5.9.3"
   }
