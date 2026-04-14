@@ -5,7 +5,7 @@ const fs = require('node:fs');
 const fsp = fs.promises;
 const path = require('node:path');
 
-const CURDIR = '.' + path.sep;
+const CURDIR = `.${path.sep}`;
 
 const RUN_OPTIONS = { timeout: 1000 };
 
@@ -82,7 +82,7 @@ const USE_STRICT = `'use strict';\n`;
 
 const addExt = (name) => {
   if (name.toLocaleLowerCase().endsWith('.js')) return name;
-  return name + '.js';
+  return `${name}.js`;
 };
 
 const internalRequire = require;
