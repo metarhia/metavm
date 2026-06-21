@@ -5,7 +5,21 @@ export const EMPTY_CJS: Context;
 export const COMMON_CONTEXT: Context;
 export const NODE_CONTEXT: Context;
 
-export class MetavmError extends Error {}
+export type MetavmErrorCode =
+  | 'ESM_NOT_SUPPORTED'
+  | 'ACCESS_DENIED'
+  | 'MODULE_NOT_FOUND';
+
+export const ERROR_CODE: {
+  readonly ESM_NOT_SUPPORTED: 'ESM_NOT_SUPPORTED';
+  readonly ACCESS_DENIED: 'ACCESS_DENIED';
+  readonly MODULE_NOT_FOUND: 'MODULE_NOT_FOUND';
+};
+
+export class MetavmError extends Error {
+  code?: MetavmErrorCode;
+  constructor(message: string, code?: MetavmErrorCode);
+}
 
 export function createContext(
   context?: Context,
