@@ -23,6 +23,12 @@ const MODULE_TYPE = {
   ECMA: 3,
 };
 
+const ERROR_CODE = {
+  ESM_NOT_SUPPORTED: 'ESM_NOT_SUPPORTED',
+  ACCESS_DENIED: 'ACCESS_DENIED',
+  MODULE_NOT_FOUND: 'MODULE_NOT_FOUND',
+};
+
 const DEFAULT = {
   AbortController,
   AbortSignal,
@@ -67,7 +73,13 @@ const NODE_CONTEXT = vm.createContext(Object.freeze({ ...DEFAULT, ...NODE }));
 const CONTEXT_CJS = Object.freeze({ module: {} });
 const EMPTY_CJS = vm.createContext(CONTEXT_CJS, CONTEXT_OPTIONS);
 
-class MetavmError extends Error {}
+class MetavmError extends Error {
+  constructor(message, code) {
+    super(message);
+    this.name = 'MetavmError';
+    if (code) this.code = code;
+  }
+}
 
 const createContext = (context, preventEscape = false) => {
   if (context === undefined) return EMPTY_CONTEXT;
@@ -81,7 +93,7 @@ const wrapSource = (source) =>
 const USE_STRICT = `'use strict';\n`;
 
 const addExt = (name) => {
-  if (name.toLocaleLowerCase().endsWith('.js')) return name;
+  if (name.toLowerCase().endsWith('.js')) return name;
   return `${name}.js`;
 };
 
@@ -90,7 +102,10 @@ const internalRequire = require;
 class MetaScript {
   constructor(name, src, options = {}) {
     if (options.type === MODULE_TYPE.ECMA) {
-      throw new Error('ECMAScript modules is not supported');
+      throw new MetavmError(
+        'ECMAScript modules is not supported',
+        ERROR_CODE.ESM_NOT_SUPPORTED,
+      );
     }
     this.name = name;
     this.dirname = options.dirname || process.cwd();
@@ -151,7 +166,12 @@ class MetaScript {
         lib = this.checkAccess(CURDIR + path.relative(dirname, name));
         if (lib instanceof Object) return lib;
       }
-      if (!lib) throw new MetavmError(`Access denied '${module}'`);
+      if (!lib) {
+        throw new MetavmError(
+          `Access denied '${module}'`,
+          ERROR_CODE.ACCESS_DENIED,
+        );
+      }
       try {
         const absolute = internalRequire.resolve(name);
         if (npm && absolute === name) return internalRequire(name);
@@ -167,7 +187,10 @@ class MetaScript {
         return script.exports;
       } catch (error) {
         if (error instanceof MetavmError) throw error;
-        throw new MetavmError(`Cannot find module '${module}'`);
+        throw new MetavmError(
+          `Cannot find module '${module}'`,
+          ERROR_CODE.MODULE_NOT_FOUND,
+        );
       }
     };
     return require;
@@ -190,6 +213,7 @@ module.exports = {
   createContext,
   MetaScript,
   MetavmError,
+  ERROR_CODE,
   createScript,
   EMPTY_CONTEXT,
   EMPTY_CJS,

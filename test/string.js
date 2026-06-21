@@ -117,6 +117,8 @@ test('Access internal not permitted', async () => {
     assert.strictEqual(ms, undefined);
   } catch (error) {
     assert.strictEqual(error.message, `Access denied 'fs'`);
+    assert.strictEqual(error.name, 'MetavmError');
+    assert.strictEqual(error.code, metavm.ERROR_CODE.ACCESS_DENIED);
   }
 });
 
@@ -129,6 +131,8 @@ test('Access non-existent not permitted', async () => {
     assert.strictEqual(ms, undefined);
   } catch (error) {
     assert.strictEqual(error.message, `Access denied 'nothing'`);
+    assert.strictEqual(error.name, 'MetavmError');
+    assert.strictEqual(error.code, metavm.ERROR_CODE.ACCESS_DENIED);
   }
 });
 
@@ -146,6 +150,8 @@ test('Access non-existent module', async () => {
     assert.strictEqual(ms, undefined);
   } catch (error) {
     assert.strictEqual(error.message, `Cannot find module 'metalog'`);
+    assert.strictEqual(error.name, 'MetavmError');
+    assert.strictEqual(error.code, metavm.ERROR_CODE.MODULE_NOT_FOUND);
   }
 });
 
@@ -202,6 +208,8 @@ test('Access nestsed not permitted', async () => {
   } catch (error) {
     const module2 = './nestedmodule2.js';
     assert.strictEqual(error.message, `Access denied '${module2}'`);
+    assert.strictEqual(error.name, 'MetavmError');
+    assert.strictEqual(error.code, metavm.ERROR_CODE.ACCESS_DENIED);
   }
 });
 
@@ -245,6 +253,7 @@ test('ECMAScript modules', async () => {
     });
     assert.fail(ms);
   } catch (error) {
-    assert.ok(error);
+    assert.strictEqual(error.name, 'MetavmError');
+    assert.strictEqual(error.code, metavm.ERROR_CODE.ESM_NOT_SUPPORTED);
   }
 });
