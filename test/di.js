@@ -2,6 +2,7 @@
 
 const vm = require('node:vm');
 const assert = require('node:assert');
+
 const metavm = require('..');
 
 const TIMEOUT = 1000;

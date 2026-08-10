@@ -143,27 +143,29 @@ class MetaScript {
   }
 
   checkAccess(name) {
-    const dir = path.join(name);
+    const dir = path.normalize(path.join(name));
     for (const key of Object.keys(this.access)) {
-      const location = path.join(key);
-      if (dir.startsWith(location)) {
-        return Reflect.get(this.access, key);
-      }
+      const location = path.normalize(path.join(key));
+      if (dir === location) return Reflect.get(this.access, key);
+      let prefix = location;
+      if (!prefix.endsWith(path.sep)) prefix += path.sep;
+      if (dir.startsWith(prefix)) return Reflect.get(this.access, key);
     }
     return null;
   }
 
   createRequire() {
     const { context, type } = this;
-    let { dirname, relative, access } = this;
     const require = (module) => {
       let name = module;
       let lib = this.checkAccess(name);
       if (lib instanceof Object) return lib;
-      const npm = !name.includes('.');
-      if (!npm) {
+      const isNpm = !name.includes('.');
+      let { dirname, relative, access } = this;
+      if (!isNpm) {
         name = path.resolve(dirname, relative, addExt(name));
-        lib = this.checkAccess(CURDIR + path.relative(dirname, name));
+        const relPath = CURDIR + path.relative(dirname, name);
+        lib = this.checkAccess(relPath);
         if (lib instanceof Object) return lib;
       }
       if (!lib) {
@@ -174,9 +176,10 @@ class MetaScript {
       }
       try {
         const absolute = internalRequire.resolve(name);
-        if (npm && absolute === name) return internalRequire(name);
+        const isBuiltin = isNpm && absolute === name;
+        if (isBuiltin) return internalRequire(name);
         relative = path.dirname(absolute);
-        if (npm) {
+        if (isNpm) {
           dirname = relative;
           access = { ...access, [CURDIR]: true };
           relative = '.';
@@ -199,13 +202,17 @@ class MetaScript {
 
 const createScript = (name, src, options) => new MetaScript(name, src, options);
 
-const readScript = async (filePath, options) => {
+const readScript = async (filePath, options = {}) => {
   const src = await fsp.readFile(filePath, 'utf8');
-  if (src === '') throw new SyntaxError(`File ${filePath} is empty`);
-  const name = options?.filename
-    ? options.filename
-    : path.basename(filePath, '.js');
-  const script = new MetaScript(name, src, options);
+  if (src === '') {
+    throw new SyntaxError(`File ${filePath} is empty`);
+  }
+  const absolute = path.resolve(filePath);
+  const basename = path.basename(filePath, '.js');
+  const name = options.filename ? options.filename : basename;
+  const dirname = options.dirname ?? path.dirname(absolute);
+  const opts = { ...options, dirname };
+  const script = new MetaScript(name, src, opts);
   return script;
 };
 

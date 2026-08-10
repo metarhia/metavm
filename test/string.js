@@ -2,6 +2,7 @@
 
 const test = require('node:test');
 const assert = require('node:assert');
+
 const metavm = require('..');
 
 const SCRIPT_FIELDS = [
@@ -159,7 +160,7 @@ test('Access nestsed commonjs', async () => {
   const sandbox = {};
   sandbox.global = sandbox;
   const src = `'use strict';
-    module.exports = require('../examples/cjs/nestedmodule1');
+    module.exports = require('../examples/cjs/nestedmodule1.js');
   `;
   const ms = metavm.createScript('Example', src, {
     context: metavm.createContext(sandbox),
