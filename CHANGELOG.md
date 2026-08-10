@@ -7,6 +7,8 @@
 - Change test.fail to asserts
 - Refactor err to error
 - Optimize asserts and formatting
+- Breaking: `readScript` defaults `dirname` to the script file folder instead
+  of `process.cwd()`, so relative `access` keys and requires resolve from there
 
 ## [1.4.5][] - 2025-08-31
 
