@@ -4,6 +4,7 @@ const vm = require('node:vm');
 const fs = require('node:fs');
 const fsp = fs.promises;
 const path = require('node:path');
+const builtinModules = require('node:module').builtinModules;
 
 const CURDIR = `.${path.sep}`;
 
@@ -158,6 +159,11 @@ class MetaScript {
     const { context, type } = this;
     const require = (module) => {
       let name = module;
+      const builtin = name.startsWith('node:');
+      if (builtin) {
+        const builtinName = name.slice(5);
+        if (builtinModules.includes(builtinName)) return internalRequire(name);
+      }
       let lib = this.checkAccess(name);
       if (lib instanceof Object) return lib;
       const isNpm = !name.includes('.');
