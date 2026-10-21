@@ -241,6 +241,32 @@ test('Access nestsed npm modules', async () => {
   assert.strictEqual(typeof ms.exports, 'object');
 });
 
+test('Access npm module with relative requires', async () => {
+  const src = `'use strict';module.exports = require('prelude-ls');`;
+  const ms = metavm.createScript('Example', src, {
+    access: {
+      'prelude-ls': true,
+    },
+    type: metavm.MODULE_TYPE.COMMONJS,
+  });
+  assert.strictEqual(typeof ms.exports.map, 'function');
+});
+
+test('Deny parent folder with current folder access', async () => {
+  const src = `'use strict';
+    module.exports = require('../examples/cjs/nestedmodule2.js');
+  `;
+  assert.throws(
+    () =>
+      metavm.createScript('Example', src, {
+        dirname: __dirname,
+        access: { './': true },
+        type: metavm.MODULE_TYPE.COMMONJS,
+      }),
+    { code: metavm.ERROR_CODE.ACCESS_DENIED },
+  );
+});
+
 test('Prevent eval for common.js modules', async () => {
   const src = `
     'use strict';module.exports = eval('100 * 2');

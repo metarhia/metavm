@@ -144,12 +144,15 @@ class MetaScript {
 
   checkAccess(name) {
     const dir = path.normalize(name);
+    const isParent = dir === '..' || dir.startsWith(`..${path.sep}`);
+    const isLocal = name.startsWith('.') && !isParent;
     for (const key of Object.keys(this.access)) {
       const location = path.normalize(key);
       const hasSep = location.endsWith(path.sep);
       const prefix = hasSep ? location : location + path.sep;
       const isFile = dir === location || dir === addExt(location);
-      const allowed = isFile || dir.startsWith(prefix);
+      const isRoot = prefix === CURDIR;
+      const allowed = isRoot ? isLocal : isFile || dir.startsWith(prefix);
       if (allowed) return Reflect.get(this.access, key);
     }
     return null;
