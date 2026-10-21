@@ -105,6 +105,15 @@ const addExt = (name) => {
   return `${name}.js`;
 };
 
+const accessRule = ([key, value]) => {
+  const location = path.normalize(key);
+  const hasSep = location.endsWith(path.sep);
+  const prefix = hasSep ? location : location + path.sep;
+  const file = addExt(location);
+  const isRoot = prefix === CURDIR;
+  return { location, file, prefix, isRoot, value };
+};
+
 const internalRequire = require;
 
 const resolveModule = (name, specifier) => {
@@ -119,6 +128,8 @@ const resolveModule = (name, specifier) => {
 };
 
 class MetaScript {
+  #rules;
+
   constructor(name, src, options = {}) {
     if (options.type === MODULE_TYPE.ECMA) {
       throw new MetavmError(
@@ -131,6 +142,7 @@ class MetaScript {
     this.relative = options.relative || '.';
     this.type = options.type || MODULE_TYPE.AUTO;
     this.access = options.access || {};
+    this.#rules = Object.entries(this.access).map(accessRule);
     if (this.type === MODULE_TYPE.AUTO) {
       if (src.includes('module.exports')) this.type = MODULE_TYPE.COMMONJS;
       else this.type = MODULE_TYPE.METARHIA;
@@ -163,14 +175,10 @@ class MetaScript {
     const dir = path.normalize(name);
     const isParent = dir === '..' || dir.startsWith(`..${path.sep}`);
     const isLocal = name.startsWith('.') && !isParent;
-    for (const key of Object.keys(this.access)) {
-      const location = path.normalize(key);
-      const hasSep = location.endsWith(path.sep);
-      const prefix = hasSep ? location : location + path.sep;
-      const isFile = dir === location || dir === addExt(location);
-      const isRoot = prefix === CURDIR;
+    for (const { location, file, prefix, isRoot, value } of this.#rules) {
+      const isFile = dir === location || dir === file;
       const allowed = isRoot ? isLocal : isFile || dir.startsWith(prefix);
-      if (allowed) return Reflect.get(this.access, key);
+      if (allowed) return value;
     }
     return null;
   }
