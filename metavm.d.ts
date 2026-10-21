@@ -8,7 +8,7 @@ export const NODE_CONTEXT: Context;
 export type MetavmErrorCode =
   'ESM_NOT_SUPPORTED' | 'ACCESS_DENIED' | 'MODULE_NOT_FOUND';
 
-export const ERROR_CODE: Record<MetavmErrorCode, MetavmErrorCode>;
+export const ERROR_CODE: { readonly [K in MetavmErrorCode]: K };
 
 export class MetavmError extends Error {
   code?: MetavmErrorCode;
