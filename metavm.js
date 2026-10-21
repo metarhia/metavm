@@ -101,6 +101,17 @@ const addExt = (name) => {
 
 const internalRequire = require;
 
+const resolveModule = (name, specifier) => {
+  try {
+    return internalRequire.resolve(name);
+  } catch {
+    throw new MetavmError(
+      `Cannot find module '${specifier}'`,
+      ERROR_CODE.MODULE_NOT_FOUND,
+    );
+  }
+};
+
 class MetaScript {
   constructor(name, src, options = {}) {
     if (options.type === MODULE_TYPE.ECMA) {
@@ -178,27 +189,19 @@ class MetaScript {
           ERROR_CODE.ACCESS_DENIED,
         );
       }
-      try {
-        const absolute = internalRequire.resolve(name);
-        const isBuiltin = isNpm && absolute === name;
-        if (isBuiltin) return internalRequire(name);
-        relative = path.dirname(absolute);
-        if (isNpm) {
-          dirname = relative;
-          access = { ...access, [CURDIR]: true };
-          relative = '.';
-        }
-        const src = fs.readFileSync(absolute, 'utf8');
-        const opt = { context, type, dirname, relative, access };
-        const script = new MetaScript(name, src, opt);
-        return script.exports;
-      } catch (error) {
-        if (error instanceof MetavmError) throw error;
-        throw new MetavmError(
-          `Cannot find module '${module}'`,
-          ERROR_CODE.MODULE_NOT_FOUND,
-        );
+      const absolute = resolveModule(name, module);
+      const isBuiltin = isNpm && absolute === name;
+      if (isBuiltin) return internalRequire(name);
+      relative = path.dirname(absolute);
+      if (isNpm) {
+        dirname = relative;
+        access = { ...access, [CURDIR]: true };
+        relative = '.';
       }
+      const src = fs.readFileSync(absolute, 'utf8');
+      const opt = { context, type, dirname, relative, access };
+      const script = new MetaScript(name, src, opt);
+      return script.exports;
     };
     return require;
   }

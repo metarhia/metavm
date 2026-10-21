@@ -191,6 +191,23 @@ test('Access nestsed commonjs without extension', async () => {
   assert.strictEqual(ms.exports.nested.value, 2);
 });
 
+test('Access nestsed module with load error', async () => {
+  const src = `'use strict';
+    module.exports = require('../examples/cjs/nestedError.js');
+  `;
+  assert.throws(
+    () =>
+      metavm.createScript('Example', src, {
+        dirname: __dirname,
+        access: {
+          '../examples/cjs/nestedError.js': true,
+        },
+        type: metavm.MODULE_TYPE.COMMONJS,
+      }),
+    { name: 'ReferenceError', message: 'unknownFunction is not defined' },
+  );
+});
+
 test('Access folder (path prefix)', async () => {
   const src = `
     'use strict';
