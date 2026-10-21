@@ -298,6 +298,20 @@ test('Prevent eval for common.js modules', async () => {
   }
 });
 
+test('Prevent eval in default contexts', async () => {
+  const src = `'use strict';module.exports = eval('100 * 2');`;
+  for (const context of [metavm.COMMON_CONTEXT, metavm.NODE_CONTEXT]) {
+    assert.throws(
+      () =>
+        metavm.createScript('Example', src, {
+          context,
+          type: metavm.MODULE_TYPE.COMMONJS,
+        }),
+      { name: 'EvalError' },
+    );
+  }
+});
+
 test('ECMAScript modules', async () => {
   const sandbox = {};
   sandbox.global = sandbox;

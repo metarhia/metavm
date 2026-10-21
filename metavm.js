@@ -70,8 +70,14 @@ const DEFAULT = {
 const NODE = { global, console, process };
 
 const EMPTY_CONTEXT = vm.createContext(Object.freeze({}), CONTEXT_OPTIONS);
-const COMMON_CONTEXT = vm.createContext(Object.freeze({ ...DEFAULT }));
-const NODE_CONTEXT = vm.createContext(Object.freeze({ ...DEFAULT, ...NODE }));
+const COMMON_CONTEXT = vm.createContext(
+  Object.freeze({ ...DEFAULT }),
+  CONTEXT_OPTIONS,
+);
+const NODE_CONTEXT = vm.createContext(
+  Object.freeze({ ...DEFAULT, ...NODE }),
+  CONTEXT_OPTIONS,
+);
 const CONTEXT_CJS = Object.freeze({ module: {} });
 const EMPTY_CJS = vm.createContext(CONTEXT_CJS, CONTEXT_OPTIONS);
 
