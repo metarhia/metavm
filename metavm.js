@@ -16,6 +16,8 @@ const CONTEXT_OPTIONS = {
   },
 };
 
+const ESCAPE_OPTIONS = { ...CONTEXT_OPTIONS, microtaskMode: 'afterEvaluate' };
+
 const MODULE_TYPE = {
   AUTO: 0,
   METARHIA: 1,
@@ -83,8 +85,8 @@ class MetavmError extends Error {
 
 const createContext = (context, preventEscape = false) => {
   if (context === undefined) return EMPTY_CONTEXT;
-  const options = preventEscape ? { microtaskMode: 'afterEvaluate' } : {};
-  return vm.createContext(context, { ...CONTEXT_OPTIONS, ...options });
+  const options = preventEscape ? ESCAPE_OPTIONS : CONTEXT_OPTIONS;
+  return vm.createContext(context, options);
 };
 
 const wrapSource = (source) =>
@@ -123,9 +125,7 @@ class MetaScript {
     const scriptOptions = { filename: name, ...options, lineOffset };
     this.script = new vm.Script(strict + code, scriptOptions);
 
-    if (options.context) this.context = options.context;
-    else if (this.type === MODULE_TYPE.COMMONJS) this.context = EMPTY_CJS;
-    else this.context = EMPTY_CONTEXT;
+    this.context = options.context || (common ? EMPTY_CJS : EMPTY_CONTEXT);
 
     const runOptions = { ...RUN_OPTIONS, ...options };
     const exports = this.script.runInContext(this.context, runOptions);
@@ -143,13 +143,13 @@ class MetaScript {
   }
 
   checkAccess(name) {
-    const dir = path.normalize(path.join(name));
+    const dir = path.normalize(name);
     for (const key of Object.keys(this.access)) {
-      const location = path.normalize(path.join(key));
-      if (dir === location) return Reflect.get(this.access, key);
-      let prefix = location;
-      if (!prefix.endsWith(path.sep)) prefix += path.sep;
-      if (dir.startsWith(prefix)) return Reflect.get(this.access, key);
+      const location = path.normalize(key);
+      const hasSep = location.endsWith(path.sep);
+      const prefix = hasSep ? location : location + path.sep;
+      const allowed = dir === location || dir.startsWith(prefix);
+      if (allowed) return Reflect.get(this.access, key);
     }
     return null;
   }

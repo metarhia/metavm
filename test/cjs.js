@@ -112,7 +112,7 @@ test('Load CJS async function', async () => {
   const result = await ms.exports('str', { field: 'value' });
   assert.deepEqual(result, expected);
 
-  assert.rejects(ms.exports('', { field: 'value' }));
+  await assert.rejects(ms.exports('', { field: 'value' }));
 });
 
 test('Use CJS local identifier', async () => {
