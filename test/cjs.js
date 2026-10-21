@@ -211,3 +211,16 @@ test('CJS access with readScript', async () => {
   assert.strictEqual(ms.exports.value, 1);
   assert.strictEqual(ms.exports.nested.value, 2);
 });
+
+test('CJS access with readScript and empty dirname', async () => {
+  const filePath = path.join(examples, 'nestedmodule1.js');
+  const ms = await metavm.readScript(filePath, {
+    dirname: '',
+    access: {
+      './nestedmodule2.js': true,
+    },
+    type: metavm.MODULE_TYPE.COMMONJS,
+  });
+  assert.strictEqual(ms.dirname, examples);
+  assert.strictEqual(ms.exports.nested.value, 2);
+});

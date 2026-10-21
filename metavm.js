@@ -214,7 +214,7 @@ const readScript = async (filePath, options) => {
   const absolute = path.resolve(filePath);
   const basename = path.basename(filePath, '.js');
   const name = options?.filename || basename;
-  const dirname = options?.dirname ?? path.dirname(absolute);
+  const dirname = options?.dirname || path.dirname(absolute);
   const opts = { ...options, dirname };
   const script = new MetaScript(name, src, opts);
   return script;
