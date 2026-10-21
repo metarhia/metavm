@@ -36,6 +36,13 @@ test('Load Metarhia script', async () => {
   assert.strictEqual(ms.exports.add(2, 3), 5);
 });
 
+test('Load Metarhia script with null options', async () => {
+  const filePath = path.join(examples, 'simple.js');
+  const ms = await metavm.readScript(filePath, null);
+  assert.strictEqual(ms.name, 'simple');
+  assert.strictEqual(ms.exports.add(2, 3), 5);
+});
+
 test('Load Metarhia empty script', async () => {
   try {
     const filePath = path.join(examples, 'empty');
