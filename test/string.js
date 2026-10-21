@@ -175,6 +175,22 @@ test('Access nestsed commonjs', async () => {
   assert.strictEqual(ms.exports.nested.value, 2);
 });
 
+test('Access nestsed commonjs without extension', async () => {
+  const src = `'use strict';
+    module.exports = require('../examples/cjs/nestedmodule1');
+  `;
+  const ms = metavm.createScript('Example', src, {
+    dirname: __dirname,
+    access: {
+      '../examples/cjs/nestedmodule1': true,
+      '../examples/cjs/nestedmodule2': true,
+    },
+    type: metavm.MODULE_TYPE.COMMONJS,
+  });
+  assert.strictEqual(ms.exports.value, 1);
+  assert.strictEqual(ms.exports.nested.value, 2);
+});
+
 test('Access folder (path prefix)', async () => {
   const src = `
     'use strict';

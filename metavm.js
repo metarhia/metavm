@@ -148,7 +148,8 @@ class MetaScript {
       const location = path.normalize(key);
       const hasSep = location.endsWith(path.sep);
       const prefix = hasSep ? location : location + path.sep;
-      const allowed = dir === location || dir.startsWith(prefix);
+      const isFile = dir === location || dir === addExt(location);
+      const allowed = isFile || dir.startsWith(prefix);
       if (allowed) return Reflect.get(this.access, key);
     }
     return null;
