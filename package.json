@@ -47,11 +47,14 @@
     "fix": "eslint . --fix && prettier --write \"**/*.js\" \"**/*.json\" \"**/*.md\" \"**/*.ts\""
   },
   "devDependencies": {
-    "@types/node": "^24.13.3",
+    "@types/node": "^26.6.5",
     "eslint": "^9.39.5",
-    "eslint-config-metarhia": "^9.1.9",
+    "eslint-config-metarhia": "^9.2.1",
     "metaskills": "^1.0.4",
-    "prettier": "^3.8.4",
+    "prettier": "^3.9.10",
     "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "js-yaml": "^5.5.0"
   }
 }
