@@ -100,16 +100,17 @@ const wrapSource = (source) =>
 
 const USE_STRICT = `'use strict';\n`;
 
+const EXTENSIONS = ['.js', '.cjs', '.json'];
+
 const addExt = (name) => {
-  const ext = path.extname(name);
-  if (ext === '') return `${name}.js`;
-  return name;
+  const ext = path.extname(name).toLowerCase();
+  return EXTENSIONS.includes(ext) ? name : `${name}.js`;
 };
 
 const packageRoot = (filename, specifier) => {
-  const parts = specifier.split('/');
   const scoped = specifier.startsWith('@');
-  const folder = scoped ? `${parts[0]}${path.sep}${parts[1]}` : parts[0];
+  const parts = specifier.split('/').slice(0, scoped ? 2 : 1);
+  const folder = parts.join(path.sep);
   const marker = `${path.sep}node_modules${path.sep}${folder}${path.sep}`;
   const index = filename.lastIndexOf(marker);
   if (index === -1) return path.dirname(filename);
@@ -217,18 +218,14 @@ class MetaScript {
       const absolute = resolveModule(name, module);
       const isBuiltin = isNpm && absolute === name;
       if (isBuiltin) return internalRequire(name);
-      const entryDir = path.dirname(absolute);
-      if (isNpm) {
-        dirname = packageRoot(absolute, module);
-        const nested = path.relative(dirname, entryDir);
-        relative = nested === '' ? '.' : nested;
-        access = { ...access, [CURDIR]: true };
-      } else {
-        relative = entryDir;
-      }
       const src = fs.readFileSync(absolute, 'utf8');
       const isJson = path.extname(absolute).toLowerCase() === '.json';
       if (isJson) return JSON.parse(src);
+      relative = path.dirname(absolute);
+      if (isNpm) {
+        dirname = packageRoot(absolute, module);
+        access = { ...access, [CURDIR]: true };
+      }
       const opt = { context, type, dirname, relative, access };
       const script = new MetaScript(name, src, opt);
       return script.exports;
