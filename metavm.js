@@ -5,7 +5,11 @@ const fs = require('node:fs');
 const fsp = fs.promises;
 const path = require('node:path');
 
+const { indexModules, loadFromRegistry } = require('./virtual.js');
+
 const CURDIR = `.${path.sep}`;
+const MODULE_RECORD = Symbol('moduleRecord');
+const MODULE_CACHE = Symbol('moduleCache');
 
 const RUN_OPTIONS = { timeout: 1000 };
 
@@ -29,6 +33,9 @@ const ERROR_CODE = {
   ESM_NOT_SUPPORTED: 'ESM_NOT_SUPPORTED',
   ACCESS_DENIED: 'ACCESS_DENIED',
   MODULE_NOT_FOUND: 'MODULE_NOT_FOUND',
+  OPTION_NOT_SUPPORTED: 'OPTION_NOT_SUPPORTED',
+  EVAL_DISALLOWED: 'EVAL_DISALLOWED',
+  CONTEXT_DISPOSED: 'CONTEXT_DISPOSED',
 };
 
 const DEFAULT = {
@@ -100,7 +107,7 @@ const wrapSource = (source) =>
 
 const USE_STRICT = `'use strict';\n`;
 
-const EXTENSIONS = ['.js', '.cjs', '.json'];
+const EXTENSIONS = ['.js', '.cjs', '.mjs', '.json'];
 
 const addExt = (name) => {
   const ext = path.extname(name).toLowerCase();
@@ -141,6 +148,10 @@ const resolveModule = (name, specifier) => {
 
 class MetaScript {
   #rules;
+  #modules;
+  #defs;
+  #record;
+  #cache;
 
   constructor(name, src, options = {}) {
     if (options.type === MODULE_TYPE.ECMA) {
@@ -155,6 +166,10 @@ class MetaScript {
     this.type = options.type || MODULE_TYPE.AUTO;
     this.access = options.access || {};
     this.#rules = Object.entries(this.access).map(accessRule);
+    this.#defs = options.modules || null;
+    this.#modules = indexModules(options.modules);
+    this.#record = options[MODULE_RECORD] || null;
+    this.#cache = options[MODULE_CACHE] || new Map();
     if (this.type === MODULE_TYPE.AUTO) {
       if (src.includes('module.exports')) this.type = MODULE_TYPE.COMMONJS;
       else this.type = MODULE_TYPE.METARHIA;
@@ -163,24 +178,58 @@ class MetaScript {
     const strict = src.startsWith(USE_STRICT) ? '' : USE_STRICT;
     const code = common ? wrapSource(src) : `{\n${src}\n}`;
     const lineOffset = strict === '' ? -1 : -2;
-    const scriptOptions = { filename: name, ...options, lineOffset };
+    const vmOptions = { ...options };
+    delete vmOptions.modules;
+    delete vmOptions[MODULE_RECORD];
+    delete vmOptions[MODULE_CACHE];
+    const scriptOptions = { filename: name, ...vmOptions, lineOffset };
     this.script = new vm.Script(strict + code, scriptOptions);
 
     this.context = options.context || (common ? EMPTY_CJS : EMPTY_CONTEXT);
 
     const runOptions = { ...RUN_OPTIONS, ...options };
+    delete runOptions.modules;
+    delete runOptions[MODULE_RECORD];
+    delete runOptions[MODULE_CACHE];
     const exports = this.script.runInContext(this.context, runOptions);
     this.exports = common ? this.commonExports(exports) : exports;
   }
 
   commonExports(closure) {
-    const exports = {};
-    const module = { exports };
+    const record = this.#record || { exports: {} };
     const require = this.createRequire();
-    const __filename = this.name;
-    const __dirname = path.dirname(__filename);
-    closure(exports, require, module, __filename, __dirname);
-    return module.exports || exports;
+    const filename = this.name;
+    const dirname = filename.startsWith('/')
+      ? path.posix.dirname(filename)
+      : path.dirname(filename);
+    closure(record.exports, require, record, filename, dirname);
+    return record.exports;
+  }
+
+  loadVirtual(specifier) {
+    if (this.#modules.size === 0) return { found: false, exports: undefined };
+    return loadFromRegistry(specifier, {
+      modules: this.#modules,
+      dirname: this.dirname,
+      relative: this.relative,
+      cache: this.#cache,
+      MetavmError,
+      ERROR_CODE,
+      MODULE_TYPE,
+      compile: (id, descriptor, record, dirname) => {
+        const script = new MetaScript(id, descriptor.source, {
+          type: descriptor.type || MODULE_TYPE.COMMONJS,
+          dirname,
+          relative: '.',
+          context: this.context,
+          access: this.access,
+          modules: this.#defs,
+          [MODULE_RECORD]: record,
+          [MODULE_CACHE]: this.#cache,
+        });
+        return script.exports;
+      },
+    });
   }
 
   checkAccess(name) {
@@ -215,18 +264,21 @@ class MetaScript {
           ERROR_CODE.ACCESS_DENIED,
         );
       }
+      const virtual = this.loadVirtual(module);
+      if (virtual.found) return virtual.exports;
       const absolute = resolveModule(name, module);
       const isBuiltin = isNpm && absolute === name;
       if (isBuiltin) return internalRequire(name);
+      const ext = path.extname(absolute).toLowerCase();
       const src = fs.readFileSync(absolute, 'utf8');
-      const isJson = path.extname(absolute).toLowerCase() === '.json';
-      if (isJson) return JSON.parse(src);
+      if (ext === '.json') return JSON.parse(src);
       relative = path.dirname(absolute);
       if (isNpm) {
         dirname = packageRoot(absolute, module);
         access = { ...access, [CURDIR]: true };
       }
-      const opt = { context, type, dirname, relative, access };
+      const kind = ext === '.mjs' ? MODULE_TYPE.ECMA : type;
+      const opt = { context, type: kind, dirname, relative, access };
       const script = new MetaScript(name, src, opt);
       return script.exports;
     };

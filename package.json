@@ -3,7 +3,7 @@
   "version": "1.4.5",
   "author": "Timur Shemsedinov <timur.shemsedinov@gmail.com>",
   "license": "MIT",
-  "description": "Metarhia script loader, node.js vm wrapper",
+  "description": "Metarhia script loader for Node.js vm and browsers",
   "keywords": [
     "node.js",
     "metarhia",
@@ -15,14 +15,31 @@
     "isolation"
   ],
   "main": "metavm.js",
+  "browser": {
+    "./metavm.js": "./metavm.mjs"
+  },
   "types": "metavm.d.ts",
   "readmeFilename": "README.md",
-  "browser": {
-    "./metavm.js": "./dist/metavm.js"
+  "exports": {
+    ".": {
+      "browser": {
+        "types": "./metavm.d.mts",
+        "default": "./metavm.mjs"
+      },
+      "node": {
+        "types": "./metavm.d.ts",
+        "default": "./metavm.js"
+      },
+      "default": "./metavm.js"
+    }
   },
   "files": [
-    "dist/",
-    "metavm.d.ts"
+    "lib/",
+    "metavm.js",
+    "metavm.mjs",
+    "metavm.d.ts",
+    "metavm.d.mts",
+    "virtual.js"
   ],
   "engines": {
     "node": ">=18"
@@ -41,16 +58,19 @@
     "url": "https://www.patreon.com/tshemsedinov"
   },
   "scripts": {
-    "test": "npm run lint && npm run types && node --test",
+    "build": "metarhia-build lib",
+    "test": "npm run build && npm run lint && npm run types && node --test",
     "types": "tsc -p tsconfig.json",
-    "lint": "eslint . && prettier --check \"**/*.js\" \"**/*.json\" \"**/*.md\" \"**/*.ts\"",
-    "fix": "eslint . --fix && prettier --write \"**/*.js\" \"**/*.json\" \"**/*.md\" \"**/*.ts\""
+    "lint": "eslint . && prettier --check \"**/*.js\" \"test/**/*.mjs\" \"**/*.json\" \"**/*.md\" \"**/*.ts\" \"**/*.mts\"",
+    "fix": "eslint . --fix && prettier --write \"**/*.js\" \"test/**/*.mjs\" \"**/*.json\" \"**/*.md\" \"**/*.ts\" \"**/*.mts\""
   },
   "devDependencies": {
     "@types/node": "^26.6.6",
     "eslint": "^10.14.0",
     "eslint-config-metarhia": "^10.0.1",
+    "metarhia-build": "^0.0.3",
     "metaskills": "^1.0.6",
+    "playwright": "^1.65.0",
     "prettier": "^3.9.10",
     "typescript": "^7.0.2"
   },

@@ -6,7 +6,12 @@ export const COMMON_CONTEXT: Context;
 export const NODE_CONTEXT: Context;
 
 export type MetavmErrorCode =
-  'ESM_NOT_SUPPORTED' | 'ACCESS_DENIED' | 'MODULE_NOT_FOUND';
+  | 'ESM_NOT_SUPPORTED'
+  | 'ACCESS_DENIED'
+  | 'MODULE_NOT_FOUND'
+  | 'OPTION_NOT_SUPPORTED'
+  | 'EVAL_DISALLOWED'
+  | 'CONTEXT_DISPOSED';
 
 export const ERROR_CODE: { readonly [K in MetavmErrorCode]: K };
 
@@ -27,12 +32,20 @@ export enum MODULE_TYPE {
   ECMA = 3,
 }
 
+export interface VirtualModule {
+  type?: MODULE_TYPE;
+  source?: string;
+  json?: unknown;
+  exports?: unknown;
+}
+
 export interface MetaScriptOptions extends ScriptOptions {
   type?: MODULE_TYPE;
   dirname?: string;
   relative?: string;
   context?: Context;
   access?: Record<string, boolean | object>;
+  modules?: Record<string, VirtualModule>;
 }
 
 export class MetaScript {

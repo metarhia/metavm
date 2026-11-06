@@ -331,3 +331,18 @@ test('ECMAScript modules', async () => {
     assert.strictEqual(error.code, metavm.ERROR_CODE.ESM_NOT_SUPPORTED);
   }
 });
+
+test('Require .mjs module', async () => {
+  const src = `'use strict';
+    module.exports = require('../examples/esm/simple.mjs');
+  `;
+  assert.throws(
+    () =>
+      metavm.createScript('Example', src, {
+        dirname: __dirname,
+        access: { '../examples/esm/simple.mjs': true },
+        type: metavm.MODULE_TYPE.COMMONJS,
+      }),
+    { name: 'MetavmError', code: metavm.ERROR_CODE.ESM_NOT_SUPPORTED },
+  );
+});
