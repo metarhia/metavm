@@ -88,6 +88,84 @@ console.log(ms.exports);
 // { field: 'value', add: [Function: add], sub: [Function: sub] }
 ```
 
+## Browser
+
+The browser entry is `metavm.mjs`, built from `lib/` with
+[metarhia-build](https://github.com/metarhia/metarhia-build) (`npm run build`).
+It evaluates trusted application code in a persistent same-origin `about:blank`
+iframe. `createScript()` stays synchronous, and a callable export can be called
+directly. This is a separate JavaScript realm, not a security sandbox: the
+frame can see browser globals and `parent`.
+
+```js
+import * as metavm from 'metavm';
+
+const context = metavm.createContext({ console });
+const script = metavm.createScript('Calculator', '(a, b) => a + b', {
+  context,
+});
+
+const add = script.exports;
+console.log(add(2, 3)); // 5
+```
+
+Preload CommonJS dependencies. The browser never fetches from inside
+`require()`.
+
+```js
+const script = metavm.createScript(
+  'main.js',
+  `module.exports = require('./math.js').add;`,
+  {
+    type: metavm.MODULE_TYPE.COMMONJS,
+    dirname: '/app',
+    context: metavm.createContext({ console }),
+    access: { './math.js': true },
+    modules: {
+      '/app/math.js': {
+        source: `module.exports = { add: (a, b) => a + b };`,
+      },
+      '/app/config.json': { json: { enabled: true } },
+      clock: { exports: { now: () => performance.now() } },
+    },
+  },
+);
+```
+
+`modules` is also available on Node.js. A registry hit is used before the
+filesystem. In the browser, a missing registry entry is `MODULE_NOT_FOUND`.
+Resolution tries the exact virtual path, then `.js`, then `.json`. It does
+not append `index.js`.
+
+`readScript(url)` fetches only that entry script, then evaluates it with
+`createScript()`. `disposeContext(context)` removes the hidden iframe; closures
+created inside it may keep the realm alive.
+
+Scripts use the same strict wrapper as Node.js. Assignments to context
+bindings and `globalThis` properties are written back. A strict `var` binding
+stays inside that evaluation in the browser and does not become a context
+property; use `globalThis.name = value` for a new persistent global.
+
+The page Content-Security-Policy must allow `eval`
+(`script-src` including `'unsafe-eval'`). `timeout`, `microtaskMode`, and
+`preventEscape` are rejected. The browser does not hide `eval` or `Function`:
+replacing those iframe globals breaks ordinary `var` bindings, so this is not
+equivalent to Node's `codeGeneration` restrictions. There is no ESM loader and
+no Node.js built-in polyfill. Chromium and Firefox include the `//# sourceURL`
+name in a runtime `Error.stack`. WebKit labels that frame `eval code` and does
+not include the name.
+
+| Behavior                            | Node.js         | Browser iframe               |
+| ----------------------------------- | --------------- | ---------------------------- |
+| `createScript` / callable `exports` | Synchronous     | Synchronous                  |
+| Host function references            | Direct          | Direct, same-origin          |
+| Context globals                     | V8 context      | Browser realm, including DOM |
+| Hard execution timeout              | Supported       | Rejected                     |
+| `codeGeneration` controls           | Enforced        | Not emulated                 |
+| CommonJS files                      | Filesystem      | Preloaded `modules`          |
+| `readScript`                        | Filesystem      | `fetch` for the entry only   |
+| ESM                                 | Not implemented | Not implemented              |
+
 ## License & Contributors
 
 Copyright (c) 2020-2026 [Metarhia contributors](https://github.com/metarhia/metavm/graphs/contributors).

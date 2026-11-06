@@ -2,6 +2,15 @@
 
 ## [Unreleased][unreleased]
 
+- Add a browser build that evaluates trusted scripts synchronously in a
+  persistent same-origin iframe, including `readScript()`, virtual CommonJS
+  modules, and `disposeContext()`
+- Build the browser entry `metavm.mjs` from `lib/` with metarhia-build
+- Add the same optional `modules` registry to Node.js, checked before the
+  filesystem
+- Return falsy `module.exports` values as-is
+- Browser support builds on work by tshemsedinov (#35, #36), a-mountain (#40),
+  and d4rl1nn (#91)
 - Add more CJS and ESM examples and tests
 - Move test examples to separate folders
 - Change test.fail to asserts

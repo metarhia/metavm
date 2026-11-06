@@ -7,5 +7,10 @@
     "noEmit": true,
     "preserveWatchOutput": true
   },
-  "include": ["*.d.ts"]
+  "include": [
+    "metavm.d.ts",
+    "metavm.d.mts",
+    "typing/node.ts",
+    "typing/browser.ts"
+  ]
 }
