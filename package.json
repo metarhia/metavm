@@ -54,9 +54,6 @@
     "prettier": "^3.9.10",
     "typescript": "^7.0.2"
   },
-  "dependencies": {
-    "js-yaml": "^5.5.0"
-  },
   "overrides": {
     "minimatch": "^11.0.1"
   }
