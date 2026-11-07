@@ -28,7 +28,14 @@ module.exports = [
     },
   },
   {
-    files: ['dist/**/*.js'],
+    files: ['test/browser/fixtures/**/*.js'],
+    rules: {
+      strict: 'off',
+      'no-unused-expressions': 'off',
+    },
+  },
+  {
+    files: ['metavm.mjs', 'test/browser/**/*.mjs'],
     languageOptions: {
       sourceType: 'module',
     },
